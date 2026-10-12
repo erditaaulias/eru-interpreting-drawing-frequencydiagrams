@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { FrequencyClass } from '../../types';
+import { FrequencyClass, DiscreteCategory } from '../../types';
 import { CheckCircle2, AlertCircle, RefreshCw, Sparkles } from 'lucide-react';
 
 interface InteractiveHistogramDrawerProps {
@@ -21,7 +21,6 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
   showIdHint = false,
 }) => {
   const maxScale = 14;
-  // Initialize student bars at 0
   const [userHeights, setUserHeights] = useState<number[]>(classes.map(() => 0));
   const [selectedXLabel, setSelectedXLabel] = useState<string>('');
   const [selectedYLabel, setSelectedYLabel] = useState<string>('');
@@ -44,15 +43,11 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
     return margin.top + plotHeight - (freq / maxScale) * plotHeight;
   };
 
-  // Convert SVG Y-coordinate click into discrete frequency (0 to 14)
   const handleGridClick = (e: React.MouseEvent<SVGElement>, classIdx: number) => {
     const svgRect = e.currentTarget.closest('svg')?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
     const clickY = e.clientY - svgRect.top;
     const relativeY = (clickY / svgRect.height) * svgHeight;
 
-    // Invert scaleY:
-    // relativeY = margin.top + plotHeight - (freq / maxScale) * plotHeight
-    // freq = ((margin.top + plotHeight - relativeY) / plotHeight) * maxScale
     const rawFreq = ((margin.top + plotHeight - relativeY) / plotHeight) * maxScale;
     const snappedFreq = Math.max(0, Math.min(maxScale, Math.round(rawFreq)));
 
@@ -62,7 +57,6 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
   };
 
   const handleCheck = () => {
-    // 1. Check axis labels
     if (selectedXLabel !== 'messages') {
       setFeedback({
         type: 'error',
@@ -80,7 +74,6 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
       return;
     }
 
-    // 2. Check each bar height
     for (let i = 0; i < classes.length; i++) {
       if (userHeights[i] !== classes[i].frequency) {
         setFeedback({
@@ -92,11 +85,10 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
       }
     }
 
-    // Success!
     setFeedback({
       type: 'success',
-      message: 'Spot on, Data Artist! All 5 bars touch perfectly, heights match the frequency table, and both axes are labelled correctly! 🌟',
-      messageId: 'Luar biasa! Semua 5 balok berimpit sempurna, tinggi sesuai tabel, dan kedua sumbu diberi label dengan benar! 🌟',
+      message: 'Spot on, Data Artist! All 5 bars touch perfectly with no gaps, heights match the frequency table, and both axes are labelled correctly! 🌟',
+      messageId: 'Luar biasa! Semua 5 balok berimpit sempurna tanpa celah, tinggi sesuai tabel, dan kedua sumbu diberi label dengan benar! 🌟',
     });
     confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
     onSuccess();
@@ -108,37 +100,36 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#E9D5FF] space-y-4">
+    <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-[#EAB308]/40 hover:border-[#EAB308] space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div>
-          <h4 className="font-bold text-[#4C1D95] text-lg">Task A: Draw the Histogram</h4>
-          <p className="text-xs text-[#7C3AED]">
+          <h4 className="font-extrabold text-[#18181B] text-lg">Task A: Draw a Histogram (Continuous Data • Touching Bars)</h4>
+          <p className="text-xs text-[#18181B] font-semibold">
             Click on the grid columns to raise each bar to match the table. In a histogram for continuous data, bars touch!
           </p>
           {showIdHint && (
-            <p className="text-xs text-[#0D9488] italic mt-0.5">
-              Klik pada kolom kisi untuk menaikkan balok sesuai frekuensi di tabel. Balok harus berimpit!
+            <p className="text-xs text-[#B45309] italic mt-0.5 font-bold">
+              Klik pada kolom kisi untuk menaikkan balok sesuai frekuensi di tabel. Balok harus berimpit tanpa celah!
             </p>
           )}
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 text-xs text-[#7C3AED] hover:text-[#4C1D95] bg-[#F5F3FF] px-3 py-1.5 rounded-xl border border-[#DDD6FE]"
+          className="flex items-center gap-1.5 text-xs text-[#18181B] font-bold hover:bg-[#FDE047] bg-[#FEF08A] px-3.5 py-1.5 rounded-xl border-2 border-[#18181B] transition-colors shadow-xs"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Reset Bars
         </button>
       </div>
 
-      {/* Axis selection dropdowns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-[#FAF5FF] rounded-2xl border border-[#EDE9FE]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-[#FEFCE8] rounded-2xl border-2 border-[#FEF08A]">
         <div>
-          <label className="text-xs font-bold text-[#4C1D95] block mb-1">
+          <label className="text-xs font-black text-[#18181B] block mb-1">
             Horizontal (X) Axis Label:
           </label>
           <select
             value={selectedXLabel}
             onChange={e => setSelectedXLabel(e.target.value)}
-            className="w-full text-xs p-2 rounded-xl border border-[#C4B5FD] bg-white text-[#4C1D95] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+            className="w-full text-xs p-2 rounded-xl border-2 border-[#18181B] bg-white text-[#18181B] font-bold focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
           >
             <option value="">-- Select Label --</option>
             <option value="messages">Messages sent (n)</option>
@@ -148,13 +139,13 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
         </div>
 
         <div>
-          <label className="text-xs font-bold text-[#4C1D95] block mb-1">
+          <label className="text-xs font-black text-[#18181B] block mb-1">
             Vertical (Y) Axis Label:
           </label>
           <select
             value={selectedYLabel}
             onChange={e => setSelectedYLabel(e.target.value)}
-            className="w-full text-xs p-2 rounded-xl border border-[#C4B5FD] bg-white text-[#4C1D95] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+            className="w-full text-xs p-2 rounded-xl border-2 border-[#18181B] bg-white text-[#18181B] font-bold focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
           >
             <option value="">-- Select Label --</option>
             <option value="frequency">Frequency (Number of students)</option>
@@ -164,13 +155,11 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
         </div>
       </div>
 
-      {/* Interactive SVG Canvas */}
       <div className="w-full overflow-x-auto flex justify-center py-2">
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           className="w-full max-w-[540px] h-auto select-none font-sans"
         >
-          {/* Y grid lines and ticks (0 to 14 by 2) */}
           {[0, 2, 4, 6, 8, 10, 12, 14].map(tick => {
             const yPos = scaleY(tick);
             return (
@@ -180,15 +169,15 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
                   y1={yPos}
                   x2={svgWidth - margin.right}
                   y2={yPos}
-                  stroke="#EDE9FE"
-                  strokeWidth="1.5"
+                  stroke="#F3F4F6"
+                  strokeWidth="1.2"
                   strokeDasharray={tick === 0 ? 'none' : '3,3'}
                 />
                 <text
                   x={margin.left - 10}
                   y={yPos + 4}
                   textAnchor="end"
-                  className="text-[12px] fill-[#6D28D9] font-bold"
+                  className="text-[12px] fill-[#18181B] font-bold"
                 >
                   {tick}
                 </text>
@@ -196,18 +185,16 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
             );
           })}
 
-          {/* Y Axis Label display */}
           <text
             transform={`rotate(-90 ${margin.left - 40} ${margin.top + plotHeight / 2})`}
             x={margin.left - 40}
             y={margin.top + plotHeight / 2}
             textAnchor="middle"
-            className="text-[12px] fill-[#4C1D95] font-bold"
+            className="text-[12px] fill-[#18181B] font-black"
           >
             {selectedYLabel === 'frequency' ? 'Frequency' : selectedYLabel ? selectedYLabel : '(Select Y Axis)'}
           </text>
 
-          {/* Bars and click targets */}
           {classes.map((cls, idx) => {
             const x1 = scaleX(cls.lower);
             const x2 = scaleX(cls.upper);
@@ -223,46 +210,43 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
                 className="cursor-pointer group"
                 onClick={e => handleGridClick(e, idx)}
               >
-                {/* Invisible full column hit-zone for easy click */}
                 <rect
                   x={x1}
                   y={margin.top}
                   width={barW}
                   height={plotHeight}
                   fill="transparent"
-                  className="hover:fill-purple-500/10 transition-colors"
+                  className="hover:fill-amber-400/25 transition-colors"
                 />
 
-                {/* Rendered Bar */}
                 {currentHeight > 0 && (
                   <rect
                     x={x1}
                     y={yTop}
                     width={barW}
                     height={barH}
-                    fill="#C4B5FD"
-                    stroke="#7C3AED"
+                    fill="#FACC15"
+                    stroke="#18181B"
                     strokeWidth="2.5"
                     className="transition-all duration-200"
                   />
                 )}
 
-                {/* Bar Value text */}
                 <rect
                   x={midX - 12}
                   y={yTop - 18}
                   width="24"
                   height="16"
                   rx="6"
-                  fill="#EDE9FE"
-                  stroke="#7C3AED"
-                  strokeWidth="1"
+                  fill="#FEF08A"
+                  stroke="#18181B"
+                  strokeWidth="1.5"
                 />
                 <text
                   x={midX}
                   y={yTop - 6}
                   textAnchor="middle"
-                  className="text-[11px] fill-[#4C1D95] font-black pointer-events-none"
+                  className="text-[11px] fill-[#18181B] font-black pointer-events-none"
                 >
                   {currentHeight}
                 </text>
@@ -270,14 +254,13 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
             );
           })}
 
-          {/* Axes Lines */}
           <line
             x1={margin.left}
             y1={margin.top + plotHeight}
             x2={svgWidth - margin.right}
             y2={margin.top + plotHeight}
-            stroke="#4C1D95"
-            strokeWidth="2.5"
+            stroke="#18181B"
+            strokeWidth="3"
             strokeLinecap="round"
           />
           <line
@@ -285,12 +268,11 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
             y1={margin.top}
             x2={margin.left}
             y2={margin.top + plotHeight}
-            stroke="#4C1D95"
-            strokeWidth="2.5"
+            stroke="#18181B"
+            strokeWidth="3"
             strokeLinecap="round"
           />
 
-          {/* X ticks */}
           {Array.from(new Set([...classes.map(c => c.lower), maxBound])).map(boundary => {
             const xPos = scaleX(boundary);
             return (
@@ -300,14 +282,14 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
                   y1={margin.top + plotHeight}
                   x2={xPos}
                   y2={margin.top + plotHeight + 6}
-                  stroke="#4C1D95"
+                  stroke="#18181B"
                   strokeWidth="2"
                 />
                 <text
                   x={xPos}
                   y={margin.top + plotHeight + 20}
                   textAnchor="middle"
-                  className="text-[12px] fill-[#4C1D95] font-bold"
+                  className="text-[12px] fill-[#18181B] font-bold"
                 >
                   {boundary}
                 </text>
@@ -315,44 +297,42 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
             );
           })}
 
-          {/* X Axis Label display */}
           <text
             x={margin.left + plotWidth / 2}
             y={svgHeight - 10}
             textAnchor="middle"
-            className="text-[12px] fill-[#4C1D95] font-bold"
+            className="text-[12px] fill-[#18181B] font-black"
           >
             {selectedXLabel === 'messages' ? 'Messages sent (n)' : selectedXLabel ? selectedXLabel : '(Select X Axis)'}
           </text>
         </svg>
       </div>
 
-      {/* Action and feedback */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <button
           onClick={handleCheck}
-          className="w-full sm:w-auto px-6 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold rounded-2xl shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-6 py-2.5 bg-[#FACC15] hover:bg-[#F59E0B] text-[#18181B] font-black rounded-2xl shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-[#18181B]"
         >
-          <Sparkles className="w-4 h-4 text-[#FDE047]" /> Check My Histogram
+          <Sparkles className="w-4 h-4 text-[#18181B]" /> Check My Histogram
         </button>
 
         {feedback && (
           <div
             className={`flex-1 text-xs md:text-sm p-3 rounded-2xl flex items-start gap-2.5 ${
               feedback.type === 'success'
-                ? 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]'
-                : 'bg-[#FFF1F2] border border-[#FECDD3] text-[#9F1239]'
+                ? 'bg-[#FEF9C3] border-2 border-[#EAB308] text-[#18181B]'
+                : 'bg-[#FEF2F2] border-2 border-[#EF4444] text-[#991B1B]'
             }`}
           >
             {feedback.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-[#CA8A04] shrink-0 mt-0.5" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-[#F43F5E] shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-[#EF4444] shrink-0 mt-0.5" />
             )}
             <div>
-              <p className="font-semibold">{feedback.message}</p>
+              <p className="font-bold">{feedback.message}</p>
               {showIdHint && feedback.messageId && (
-                <p className="italic text-xs mt-1 text-[#047857]">
+                <p className="italic text-xs mt-1 text-[#991B1B] font-semibold">
                   🇮🇩 {feedback.messageId}
                 </p>
               )}
@@ -364,47 +344,22 @@ export const InteractiveHistogramDrawer: React.FC<InteractiveHistogramDrawerProp
   );
 };
 
-interface InteractivePolygonDrawerProps {
-  classes: FrequencyClass[];
+interface InteractiveBarChartDrawerProps {
+  categories: DiscreteCategory[];
   variableName: string;
-  unit: string;
-  symbol: string;
   onSuccess: () => void;
   showIdHint?: boolean;
 }
 
-export const InteractivePolygonDrawer: React.FC<InteractivePolygonDrawerProps> = ({
-  classes,
+export const InteractiveBarChartDrawer: React.FC<InteractiveBarChartDrawerProps> = ({
+  categories,
   variableName,
-  unit,
-  symbol,
   onSuccess,
   showIdHint = false,
 }) => {
-  const maxScale = 14;
-  // Midpoint inputs
-  const [userMidpoints, setUserMidpoints] = useState<string[]>(classes.map(() => ''));
-  const [midpointsChecked, setMidpointsChecked] = useState<boolean>(false);
-  const [midpointError, setMidpointError] = useState<string | null>(null);
-
-  // User plotted points: map each class index to frequency (or null if unplotted)
-  const [plottedFreqs, setPlottedFreqs] = useState<(number | null)[]>(classes.map(() => null));
-  const [joined, setJoined] = useState<boolean>(false);
+  const maxScale = 16;
+  const [userHeights, setUserHeights] = useState<number[]>(categories.map(() => 0));
   const [feedback, setFeedback] = useState<{ type: 'idle' | 'success' | 'error'; message: string; messageId?: string } | null>(null);
-
-  const correctMidpoints = classes.map(c => (c.lower + c.upper) / 2);
-
-  const handleVerifyMidpoints = () => {
-    for (let i = 0; i < classes.length; i++) {
-      const val = parseFloat(userMidpoints[i]);
-      if (isNaN(val) || Math.abs(val - correctMidpoints[i]) > 0.1) {
-        setMidpointError(`Check row ${i + 1}: (${classes[i].lower} + ${classes[i].upper}) ÷ 2 = ${correctMidpoints[i]}`);
-        return;
-      }
-    }
-    setMidpointError(null);
-    setMidpointsChecked(true);
-  };
 
   const svgWidth = 520;
   const svgHeight = 310;
@@ -412,18 +367,16 @@ export const InteractivePolygonDrawer: React.FC<InteractivePolygonDrawerProps> =
   const plotWidth = svgWidth - margin.left - margin.right;
   const plotHeight = svgHeight - margin.top - margin.bottom;
 
-  const minBound = classes[0].lower;
-  const maxBound = classes[classes.length - 1].upper;
-
-  const scaleX = (val: number) => {
-    return margin.left + ((val - minBound) / (maxBound - minBound)) * plotWidth;
-  };
+  const totalSlots = categories.length;
+  const slotWidth = plotWidth / totalSlots;
+  const barWidth = slotWidth * 0.62; // Bars have clear spaces between them
+  const barOffset = (slotWidth - barWidth) / 2;
 
   const scaleY = (freq: number) => {
     return margin.top + plotHeight - (freq / maxScale) * plotHeight;
   };
 
-  const handlePlotClick = (e: React.MouseEvent<SVGElement>, classIdx: number) => {
+  const handleBarClick = (e: React.MouseEvent<SVGElement>, idx: number) => {
     const svgRect = e.currentTarget.closest('svg')?.getBoundingClientRect() || e.currentTarget.getBoundingClientRect();
     const clickY = e.clientY - svgRect.top;
     const relativeY = (clickY / svgRect.height) * svgHeight;
@@ -431,351 +384,227 @@ export const InteractivePolygonDrawer: React.FC<InteractivePolygonDrawerProps> =
     const rawFreq = ((margin.top + plotHeight - relativeY) / plotHeight) * maxScale;
     const snappedFreq = Math.max(0, Math.min(maxScale, Math.round(rawFreq)));
 
-    const next = [...plottedFreqs];
-    next[classIdx] = snappedFreq;
-    setPlottedFreqs(next);
+    const next = [...userHeights];
+    next[idx] = snappedFreq;
+    setUserHeights(next);
   };
 
-  const handleCheckPolygon = () => {
-    if (!joined) {
-      setFeedback({
-        type: 'error',
-        message: 'Click the "Join points with ruler" button to connect your plotted midpoints!',
-        messageId: 'Klik tombol "Hubungkan titik dengan penggaris" untuk menghubungkan titik-titik Anda!',
-      });
-      return;
-    }
-
-    for (let i = 0; i < classes.length; i++) {
-      if (plottedFreqs[i] === null) {
+  const handleCheck = () => {
+    for (let i = 0; i < categories.length; i++) {
+      if (userHeights[i] !== categories[i].frequency) {
         setFeedback({
           type: 'error',
-          message: `You haven't plotted a point for class ${classes[i].lower} ≤ ${symbol} < ${classes[i].upper} yet!`,
-          messageId: `Anda belum memplot titik untuk kelas ${classes[i].lower} ≤ ${symbol} < ${classes[i].upper}!`,
-        });
-        return;
-      }
-      if (plottedFreqs[i] !== classes[i].frequency) {
-        setFeedback({
-          type: 'error',
-          message: `Point ${i + 1} at midpoint ${correctMidpoints[i]} is plotted at frequency ${plottedFreqs[i]}, but should be ${classes[i].frequency}!`,
-          messageId: `Titik ${i + 1} pada titik tengah ${correctMidpoints[i]} berada di frekuensi ${plottedFreqs[i]}, seharusnya ${classes[i].frequency}!`,
+          message: `Bar "${categories[i].category}" is set to height ${userHeights[i]}, but should be ${categories[i].frequency}!`,
+          messageId: `Balok "${categories[i].category}" tingginya ${userHeights[i]}, seharusnya ${categories[i].frequency}!`,
         });
         return;
       }
     }
 
-    // Success!
     setFeedback({
       type: 'success',
-      message: 'Magnificent work! All midpoints accurately calculated, plotted at (midpoint, frequency), and joined with straight lines! 🌟',
-      messageId: 'Hebat sekali! Semua titik tengah tepat dihitung, diplot pada (titik tengah, frekuensi), dan dihubungkan garis lurus! 🌟',
+      message: 'Excellent! Your bar chart has clear gaps between bars, correct categories, and accurate heights! 🌟',
+      messageId: 'Hebat sekali! Diagram batangmu memiliki celah antarbalok yang jelas, kategori tepat, dan tinggi akurat! 🌟',
     });
     confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
     onSuccess();
   };
 
-  // Build polyline points
-  const polylineCoords = classes
-    .map((cls, idx) => {
-      const f = plottedFreqs[idx];
-      if (f === null) return null;
-      const mid = correctMidpoints[idx];
-      return `${scaleX(mid)},${scaleY(f)}`;
-    })
-    .filter(Boolean)
-    .join(' ');
-
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#E9D5FF] space-y-4">
-      <div>
-        <h4 className="font-bold text-[#4C1D95] text-lg">Task B: Complete Midpoints & Draw Frequency Polygon</h4>
-        <p className="text-xs text-[#7C3AED]">
-          Step 1: Calculate the midpoint for each interval. Step 2: Plot the points on the grid and join them with straight lines!
-        </p>
+    <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-[#EAB308]/40 hover:border-[#EAB308] space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h4 className="font-extrabold text-[#18181B] text-lg">Task B: Draw a Bar Chart (Discrete Data • Gaps Between Bars)</h4>
+          <p className="text-xs text-[#18181B] font-semibold">
+            Data: Number of pets owned by 40 students (0 pets: 8, 1 pet: 14, 2 pets: 10, 3 pets: 5, 4+ pets: 3). Click to set heights!
+          </p>
+          {showIdHint && (
+            <p className="text-xs text-[#B45309] italic mt-0.5 font-bold">
+              Data diskrit: Gambar diagram batang dengan celah di antara tiap balok!
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => {
+            setUserHeights(categories.map(() => 0));
+            setFeedback(null);
+          }}
+          className="flex items-center gap-1.5 text-xs text-[#18181B] font-bold hover:bg-[#FDE047] bg-[#FEF08A] px-3.5 py-1.5 rounded-xl border-2 border-[#18181B] transition-colors shadow-xs"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Reset Bars
+        </button>
       </div>
 
-      {/* Midpoint calculation table */}
-      <div className="p-3 bg-[#FAF5FF] rounded-2xl border border-[#EDE9FE]">
-        <h5 className="font-bold text-xs text-[#4C1D95] mb-2">Step 1: Fill in the Midpoints</h5>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {classes.map((cls, idx) => (
-            <div key={`mid-calc-${idx}`} className="bg-white p-2 rounded-xl border border-[#DDD6FE] text-center">
-              <span className="text-[11px] font-bold text-[#6D28D9] block">{cls.label}</span>
-              <span className="text-[10px] text-gray-500 block mb-1">Freq: {cls.frequency}</span>
-              <input
-                type="number"
-                step="0.5"
-                placeholder="Midpoint"
-                value={userMidpoints[idx]}
-                disabled={midpointsChecked}
-                onChange={e => {
-                  const n = [...userMidpoints];
-                  n[idx] = e.target.value;
-                  setUserMidpoints(n);
-                }}
-                className={`w-full text-center text-xs font-bold py-1 px-1.5 rounded-lg border ${
-                  midpointsChecked
-                    ? 'bg-[#ECFDF5] border-[#10B981] text-[#065F46]'
-                    : 'border-[#C4B5FD] text-[#4C1D95]'
-                } focus:outline-none`}
-              />
-            </div>
-          ))}
-        </div>
+      <div className="w-full overflow-x-auto flex justify-center py-2">
+        <svg
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          className="w-full max-w-[540px] h-auto select-none font-sans"
+        >
+          {[0, 2, 4, 6, 8, 10, 12, 14, 16].map(tick => {
+            const yPos = scaleY(tick);
+            return (
+              <g key={`bdraw-ytick-${tick}`}>
+                <line
+                  x1={margin.left}
+                  y1={yPos}
+                  x2={svgWidth - margin.right}
+                  y2={yPos}
+                  stroke="#F3F4F6"
+                  strokeWidth="1.2"
+                  strokeDasharray={tick === 0 ? 'none' : '3,3'}
+                />
+                <text
+                  x={margin.left - 10}
+                  y={yPos + 4}
+                  textAnchor="end"
+                  className="text-[12px] fill-[#18181B] font-bold"
+                >
+                  {tick}
+                </text>
+              </g>
+            );
+          })}
 
-        {!midpointsChecked ? (
-          <div className="mt-2.5 flex items-center justify-between">
-            <button
-              onClick={handleVerifyMidpoints}
-              className="text-xs px-4 py-2 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold rounded-xl"
-            >
-              Verify Midpoints
-            </button>
-            {midpointError && (
-              <span className="text-xs text-[#E11D48] font-bold">{midpointError}</span>
+          <text
+            transform={`rotate(-90 ${margin.left - 40} ${margin.top + plotHeight / 2})`}
+            x={margin.left - 40}
+            y={margin.top + plotHeight / 2}
+            textAnchor="middle"
+            className="text-[12px] fill-[#18181B] font-black"
+          >
+            Frequency (Students)
+          </text>
+
+          {categories.map((cat, idx) => {
+            const slotX = margin.left + idx * slotWidth;
+            const barX = slotX + barOffset;
+            const currentHeight = userHeights[idx];
+            const yTop = scaleY(currentHeight);
+            const barH = (currentHeight / maxScale) * plotHeight;
+            const midX = barX + barWidth / 2;
+
+            return (
+              <g
+                key={`bdraw-bar-${idx}`}
+                className="cursor-pointer group"
+                onClick={e => handleBarClick(e, idx)}
+              >
+                <rect
+                  x={slotX}
+                  y={margin.top}
+                  width={slotWidth}
+                  height={plotHeight}
+                  fill="transparent"
+                  className="hover:fill-amber-400/25 transition-colors"
+                />
+
+                {currentHeight > 0 && (
+                  <rect
+                    x={barX}
+                    y={yTop}
+                    width={barWidth}
+                    height={barH}
+                    fill="#FBBF24"
+                    stroke="#18181B"
+                    strokeWidth="2.5"
+                    rx="4"
+                    className="transition-all duration-200"
+                  />
+                )}
+
+                <rect
+                  x={midX - 12}
+                  y={yTop - 18}
+                  width="24"
+                  height="16"
+                  rx="6"
+                  fill="#FEF08A"
+                  stroke="#18181B"
+                  strokeWidth="1.5"
+                />
+                <text
+                  x={midX}
+                  y={yTop - 6}
+                  textAnchor="middle"
+                  className="text-[11px] fill-[#18181B] font-black pointer-events-none"
+                >
+                  {currentHeight}
+                </text>
+
+                <text
+                  x={midX}
+                  y={margin.top + plotHeight + 20}
+                  textAnchor="middle"
+                  className="text-[11px] fill-[#18181B] font-extrabold"
+                >
+                  {cat.category}
+                </text>
+              </g>
+            );
+          })}
+
+          <line
+            x1={margin.left}
+            y1={margin.top + plotHeight}
+            x2={svgWidth - margin.right}
+            y2={margin.top + plotHeight}
+            stroke="#18181B"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <line
+            x1={margin.left}
+            y1={margin.top}
+            x2={margin.left}
+            y2={margin.top + plotHeight}
+            stroke="#18181B"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+
+          <text
+            x={margin.left + plotWidth / 2}
+            y={svgHeight - 10}
+            textAnchor="middle"
+            className="text-[12px] fill-[#18181B] font-black"
+          >
+            {variableName} (Note the gaps between bars!)
+          </text>
+        </svg>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+        <button
+          onClick={handleCheck}
+          className="w-full sm:w-auto px-6 py-2.5 bg-[#FACC15] hover:bg-[#F59E0B] text-[#18181B] font-black rounded-2xl shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-[#18181B]"
+        >
+          <Sparkles className="w-4 h-4 text-[#18181B]" /> Check My Bar Chart
+        </button>
+
+        {feedback && (
+          <div
+            className={`flex-1 text-xs md:text-sm p-3 rounded-2xl flex items-start gap-2.5 ${
+              feedback.type === 'success'
+                ? 'bg-[#FEF9C3] border-2 border-[#EAB308] text-[#18181B]'
+                : 'bg-[#FEF2F2] border-2 border-[#EF4444] text-[#991B1B]'
+            }`}
+          >
+            {feedback.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 text-[#CA8A04] shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-[#EF4444] shrink-0 mt-0.5" />
             )}
+            <div>
+              <p className="font-bold">{feedback.message}</p>
+              {showIdHint && feedback.messageId && (
+                <p className="italic text-xs mt-1 text-[#991B1B] font-semibold">
+                  🇮🇩 {feedback.messageId}
+                </p>
+              )}
+            </div>
           </div>
-        ) : (
-          <p className="text-xs text-[#059669] font-bold mt-2 flex items-center gap-1">
-            <CheckCircle2 className="w-4 h-4" /> Midpoints verified! Now click on the grid below at each midpoint column to plot the dots.
-          </p>
         )}
       </div>
-
-      {/* Step 2: SVG Plotting Canvas */}
-      {midpointsChecked && (
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-[#4C1D95]">
-              Step 2: Plot (midpoint, frequency) on the grid
-            </span>
-            <button
-              onClick={() => setJoined(!joined)}
-              className={`text-xs px-3 py-1.5 rounded-xl font-bold border transition-colors ${
-                joined
-                  ? 'bg-[#CCFBF1] text-[#0F766E] border-[#14B8A6]'
-                  : 'bg-[#F5F3FF] text-[#7C3AED] border-[#C4B5FD] hover:bg-[#EDE9FE]'
-              }`}
-            >
-              {joined ? '✓ Points Connected' : 'Join points with ruler 📏'}
-            </button>
-          </div>
-
-          <div className="w-full overflow-x-auto flex justify-center py-2">
-            <svg
-              viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-              className="w-full max-w-[540px] h-auto select-none font-sans"
-            >
-              {/* Y grid lines and ticks (0 to 14 by 2) */}
-              {[0, 2, 4, 6, 8, 10, 12, 14].map(tick => {
-                const yPos = scaleY(tick);
-                return (
-                  <g key={`poly-ytick-${tick}`}>
-                    <line
-                      x1={margin.left}
-                      y1={yPos}
-                      x2={svgWidth - margin.right}
-                      y2={yPos}
-                      stroke="#EDE9FE"
-                      strokeWidth="1.5"
-                      strokeDasharray={tick === 0 ? 'none' : '3,3'}
-                    />
-                    <text
-                      x={margin.left - 10}
-                      y={yPos + 4}
-                      textAnchor="end"
-                      className="text-[12px] fill-[#6D28D9] font-bold"
-                    >
-                      {tick}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* Y Axis Label */}
-              <text
-                transform={`rotate(-90 ${margin.left - 40} ${margin.top + plotHeight / 2})`}
-                x={margin.left - 40}
-                y={margin.top + plotHeight / 2}
-                textAnchor="middle"
-                className="text-[12px] fill-[#4C1D95] font-bold"
-              >
-                Frequency (Students)
-              </text>
-
-              {/* Midpoint vertical guide dashed lines & click zones */}
-              {classes.map((cls, idx) => {
-                const mid = correctMidpoints[idx];
-                const xMid = scaleX(mid);
-                const x1 = scaleX(cls.lower);
-                const x2 = scaleX(cls.upper);
-                const colW = x2 - x1;
-
-                return (
-                  <g
-                    key={`mid-guide-${idx}`}
-                    className="cursor-pointer"
-                    onClick={e => handlePlotClick(e, idx)}
-                  >
-                    {/* Invisible click zone for this column */}
-                    <rect
-                      x={x1}
-                      y={margin.top}
-                      width={colW}
-                      height={plotHeight}
-                      fill="transparent"
-                      className="hover:fill-teal-500/10 transition-colors"
-                    />
-
-                    {/* Vertical dashed guideline for midpoint */}
-                    <line
-                      x1={xMid}
-                      y1={margin.top}
-                      x2={xMid}
-                      y2={margin.top + plotHeight}
-                      stroke="#CCFBF1"
-                      strokeWidth="2"
-                      strokeDasharray="4,4"
-                    />
-                  </g>
-                );
-              })}
-
-              {/* Connected lines if joined */}
-              {joined && polylineCoords && (
-                <polyline
-                  points={polylineCoords}
-                  fill="none"
-                  stroke="#0D9488"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
-
-              {/* Plotted Dots */}
-              {classes.map((cls, idx) => {
-                const f = plottedFreqs[idx];
-                if (f === null) return null;
-                const mid = correctMidpoints[idx];
-                const xMid = scaleX(mid);
-                const yPos = scaleY(f);
-
-                return (
-                  <g key={`plotted-dot-${idx}`}>
-                    <circle
-                      cx={xMid}
-                      cy={yPos}
-                      r="6.5"
-                      fill="#FFFFFF"
-                      stroke="#0D9488"
-                      strokeWidth="3"
-                    />
-                    <text
-                      x={xMid}
-                      y={yPos - 12}
-                      textAnchor="middle"
-                      className="text-[11px] fill-[#0F766E] font-black"
-                    >
-                      ({mid}, {f})
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* Axes Lines */}
-              <line
-                x1={margin.left}
-                y1={margin.top + plotHeight}
-                x2={svgWidth - margin.right}
-                y2={margin.top + plotHeight}
-                stroke="#4C1D95"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1={margin.left}
-                y1={margin.top}
-                x2={margin.left}
-                y2={margin.top + plotHeight}
-                stroke="#4C1D95"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-
-              {/* X ticks for midpoints */}
-              {correctMidpoints.map((mid, idx) => {
-                const xPos = scaleX(mid);
-                return (
-                  <g key={`mid-tick-${idx}`}>
-                    <line
-                      x1={xPos}
-                      y1={margin.top + plotHeight}
-                      x2={xPos}
-                      y2={margin.top + plotHeight + 6}
-                      stroke="#0D9488"
-                      strokeWidth="2"
-                    />
-                    <text
-                      x={xPos}
-                      y={margin.top + plotHeight + 20}
-                      textAnchor="middle"
-                      className="text-[12px] fill-[#0F766E] font-bold"
-                    >
-                      {mid}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* X Axis Label */}
-              <text
-                x={margin.left + plotWidth / 2}
-                y={svgHeight - 10}
-                textAnchor="middle"
-                className="text-[12px] fill-[#4C1D95] font-bold"
-              >
-                Messages sent (Midpoints)
-              </text>
-            </svg>
-          </div>
-
-          {/* Action button & feedback */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            <button
-              onClick={handleCheckPolygon}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold rounded-2xl shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-[#FDE047]" /> Check My Frequency Polygon
-            </button>
-
-            {feedback && (
-              <div
-                className={`flex-1 text-xs md:text-sm p-3 rounded-2xl flex items-start gap-2.5 ${
-                  feedback.type === 'success'
-                    ? 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]'
-                    : 'bg-[#FFF1F2] border border-[#FECDD3] text-[#9F1239]'
-                }`}
-              >
-                {feedback.type === 'success' ? (
-                  <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-[#F43F5E] shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <p className="font-semibold">{feedback.message}</p>
-                  {showIdHint && feedback.messageId && (
-                    <p className="italic text-xs mt-1 text-[#047857]">
-                      🇮🇩 {feedback.messageId}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

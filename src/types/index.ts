@@ -5,14 +5,21 @@ export interface FrequencyClass {
   label?: string; // e.g. "0 ≤ t < 1"
 }
 
+export interface DiscreteCategory {
+  category: string;
+  frequency: number;
+}
+
 export interface Dataset {
   id: string;
   title: string;
   subtitle: string;
   variableName: string; // e.g. "Screen time"
-  symbol: string; // e.g. "t"
-  unit: string; // e.g. "hours/day"
-  classes: FrequencyClass[];
+  symbol?: string; // e.g. "t"
+  unit?: string; // e.g. "hours/day"
+  dataType: 'continuous' | 'discrete';
+  classes?: FrequencyClass[];
+  discreteData?: DiscreteCategory[];
   story: string;
   realWorldContext: string;
 }
@@ -51,7 +58,7 @@ export interface SpotMistakeItem {
   id: string;
   title: string;
   description: string;
-  faultType: 'gap-in-continuous' | 'wrong-polygon-plotting' | 'uneven-scale';
+  faultType: 'gap-in-continuous' | 'touching-in-discrete' | 'uneven-scale';
   options: {
     id: string;
     textEn: string;
@@ -65,7 +72,7 @@ export interface UserProgress {
   masteredGoals: string[];
   level1Score: number;
   level2HistogramDone: boolean;
-  level2PolygonDone: boolean;
+  level2BarChartDone: boolean;
   level3Score: number;
   exitTicketReflection: string;
   exitTicketAnswers: Record<string, string>;

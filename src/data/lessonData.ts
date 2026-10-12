@@ -1,12 +1,14 @@
-import { Dataset, FrequencyClass, LearningGoal, GlossaryTerm, QuizQuestion, SpotMistakeItem } from '../types';
+import { Dataset, FrequencyClass, DiscreteCategory, LearningGoal, GlossaryTerm, QuizQuestion, SpotMistakeItem } from '../types';
 
 // Helper functions for dynamic computation
-export function calculateTotal(classes: FrequencyClass[]): number {
-  return classes.reduce((sum, item) => sum + item.frequency, 0);
-}
-
-export function calculateMidpoint(cls: FrequencyClass): number {
-  return (cls.lower + cls.upper) / 2;
+export function calculateTotal(classes?: FrequencyClass[], discrete?: DiscreteCategory[]): number {
+  if (classes) {
+    return classes.reduce((sum, item) => sum + item.frequency, 0);
+  }
+  if (discrete) {
+    return discrete.reduce((sum, item) => sum + item.frequency, 0);
+  }
+  return 0;
 }
 
 export function formatInterval(cls: FrequencyClass, symbol: string = 'x'): string {
@@ -17,20 +19,21 @@ export function getModalClass(classes: FrequencyClass[]): FrequencyClass {
   return [...classes].sort((a, b) => b.frequency - a.frequency)[0];
 }
 
-export function getMaxFrequency(classes: FrequencyClass[]): number {
-  return Math.max(...classes.map(c => c.frequency));
+export function getModalCategory(discrete: DiscreteCategory[]): DiscreteCategory {
+  return [...discrete].sort((a, b) => b.frequency - a.frequency)[0];
 }
 
 // 1. Core Datasets
 export const SCREEN_TIME_DATA: Dataset = {
   id: 'screen-time',
   title: 'Phone Screen Time of 30 Students',
-  subtitle: 'Stage 8 Class Survey on Daily Smartphone Use',
+  subtitle: 'Continuous Grouped Data • Daily Smartphone Use',
   variableName: 'Screen time',
   symbol: 't',
   unit: 'hours/day',
-  story: 'Maya and her friends tracked their daily screen time over one week to see how much time they spend texting, watching video reels, and studying.',
-  realWorldContext: 'Smartphone operating systems (iOS Screen Time & Android Digital Wellbeing) use histograms to show app usage patterns!',
+  dataType: 'continuous',
+  story: 'Maya and her friends tracked their daily screen time over one week. Time is continuous, so it is grouped into equal class intervals.',
+  realWorldContext: 'iOS Screen Time & Android Digital Wellbeing use histograms with touching bars because time flows continuously!',
   classes: [
     { lower: 0, upper: 1, frequency: 2, label: '0 ≤ t < 1' },
     { lower: 1, upper: 2, frequency: 5, label: '1 ≤ t < 2' },
@@ -41,33 +44,34 @@ export const SCREEN_TIME_DATA: Dataset = {
   ],
 };
 
-export const HEIGHTS_DATA: Dataset = {
-  id: 'heights',
-  title: 'Heights of 40 Girls in Year 8',
-  subtitle: 'Annual Physical Education Health Check',
-  variableName: 'Height',
-  symbol: 'h',
-  unit: 'cm',
-  story: 'During the school annual health check, Nurse Ratna measured the heights of 40 Year 8 girls to check their growth milestones.',
-  realWorldContext: 'Paediatricians and the World Health Organization (WHO) use height distribution polygons to monitor healthy adolescent growth.',
-  classes: [
-    { lower: 140, upper: 145, frequency: 3, label: '140 ≤ h < 145' },
-    { lower: 145, upper: 150, frequency: 8, label: '145 ≤ h < 150' },
-    { lower: 150, upper: 155, frequency: 14, label: '150 ≤ h < 155' },
-    { lower: 155, upper: 160, frequency: 10, label: '155 ≤ h < 160' },
-    { lower: 160, upper: 165, frequency: 5, label: '160 ≤ h < 165' },
+export const SIBLINGS_DATA: Dataset = {
+  id: 'siblings-data',
+  title: 'Number of Siblings of 40 Students',
+  subtitle: 'Discrete Data • Counted in Whole Numbers',
+  variableName: 'Number of siblings',
+  unit: 'siblings',
+  dataType: 'discrete',
+  story: 'In Year 8, students were surveyed on how many brothers and sisters they have. Because you can only have 0, 1, 2, 3, or 4 siblings (not 1.7 siblings!), this is discrete data.',
+  realWorldContext: 'Demographers and schools use bar charts with gaps between bars to represent discrete household counts.',
+  discreteData: [
+    { category: '0 siblings', frequency: 6 },
+    { category: '1 sibling', frequency: 16 },
+    { category: '2 siblings', frequency: 12 },
+    { category: '3 siblings', frequency: 4 },
+    { category: '4+ siblings', frequency: 2 },
   ],
 };
 
 export const BOBA_WAITING_DATA: Dataset = {
   id: 'boba-waiting',
   title: 'Waiting Time at a Bubble Tea Shop',
-  subtitle: 'Friday Afternoon Queue at ChaTime Grand Mall',
+  subtitle: 'Continuous Grouped Data • Friday Rush Hours',
   variableName: 'Waiting time',
   symbol: 't',
   unit: 'minutes',
+  dataType: 'continuous',
   story: 'Nadia investigated customer queue times at the school boba shop during peak Friday afternoon rush to see if service was fast enough.',
-  realWorldContext: 'Logistics and café managers use frequency diagrams to optimise staff scheduling and reduce wait queues.',
+  realWorldContext: 'Logistics and café managers use histograms to optimise staff scheduling and reduce wait queues.',
   classes: [
     { lower: 0, upper: 2, frequency: 6, label: '0 ≤ t < 2' },
     { lower: 2, upper: 4, frequency: 11, label: '2 ≤ t < 4' },
@@ -80,12 +84,13 @@ export const BOBA_WAITING_DATA: Dataset = {
 export const READING_DATA: Dataset = {
   id: 'reading-time',
   title: 'Weekly Reading Time of 25 Students',
-  subtitle: 'English Literature Book Club Survey',
+  subtitle: 'Stage 8 Book Club Survey (Histogram)',
   variableName: 'Reading time',
   symbol: 't',
   unit: 'hours/week',
-  story: 'Students in the Year 8 Book Club recorded how many hours they spent reading novels and articles over the week.',
-  realWorldContext: 'Publishing houses and reading advocates use histograms to understand leisure habits.',
+  dataType: 'continuous',
+  story: 'Students in the Year 8 Book Club recorded how many hours they spent reading novels over the week.',
+  realWorldContext: 'Publishing houses and reading advocates use histograms to understand leisure reading distributions.',
   classes: [
     { lower: 0, upper: 2, frequency: 3, label: '0 ≤ t < 2' },
     { lower: 2, upper: 4, frequency: 7, label: '2 ≤ t < 4' },
@@ -98,12 +103,13 @@ export const READING_DATA: Dataset = {
 export const MESSAGES_DATA: Dataset = {
   id: 'messages-sent',
   title: 'Messages Sent in a Day by 35 Students',
-  subtitle: 'WhatsApp & Social Chat Activity Survey',
+  subtitle: 'Stage 8 Class Group Activity (Continuous Histogram)',
   variableName: 'Messages sent',
   symbol: 'n',
   unit: 'messages',
-  story: 'How chatty is Year 8? 35 students recorded how many messages they sent in a 24-hour period.',
-  realWorldContext: 'Social networks analyze messaging volume distributions to dimension their servers and cloud bandwidth.',
+  dataType: 'continuous',
+  story: '35 students recorded how many messages they sent during a 24-hour study cycle, grouped in equal classes of 10 messages.',
+  realWorldContext: 'Social networks analyze messaging volume distributions using continuous interval histograms.',
   classes: [
     { lower: 0, upper: 10, frequency: 4, label: '0 ≤ n < 10' },
     { lower: 10, upper: 20, frequency: 9, label: '10 ≤ n < 20' },
@@ -113,57 +119,50 @@ export const MESSAGES_DATA: Dataset = {
   ],
 };
 
-// Comparison dataset for Level 3
-export const COMPARISON_CLASSES_8A: FrequencyClass[] = [
-  { lower: 20, upper: 30, frequency: 3, label: '20 ≤ t < 30' },
-  { lower: 30, upper: 40, frequency: 12, label: '30 ≤ t < 40' },
-  { lower: 40, upper: 50, frequency: 8, label: '40 ≤ t < 50' },
-  { lower: 50, upper: 60, frequency: 2, label: '50 ≤ t < 60' },
+export const PETS_DISCRETE_DATA: DiscreteCategory[] = [
+  { category: '0 pets', frequency: 8 },
+  { category: '1 pet', frequency: 14 },
+  { category: '2 pets', frequency: 10 },
+  { category: '3 pets', frequency: 5 },
+  { category: '4+ pets', frequency: 3 },
 ];
 
-export const COMPARISON_CLASSES_8B: FrequencyClass[] = [
-  { lower: 20, upper: 30, frequency: 1, label: '20 ≤ t < 30' },
-  { lower: 30, upper: 40, frequency: 4, label: '30 ≤ t < 40' },
-  { lower: 40, upper: 50, frequency: 11, label: '40 ≤ t < 50' },
-  { lower: 50, upper: 60, frequency: 9, label: '50 ≤ t < 60' },
-];
-
-// 2. Learning Goals (Checklist)
+// 2. Learning Goals (Checklist aligned to Cambridge Stage 8 Coursebook)
 export const LEARNING_GOALS: LearningGoal[] = [
   {
     id: 'goal-1',
-    textEn: 'I can explain what a frequency table with grouped data (class intervals) shows.',
-    textId: 'Saya dapat menjelaskan apa yang ditunjukkan oleh tabel frekuensi data berkelompok (interval kelas).',
+    textEn: 'I can explain what a frequency table with grouped continuous data shows.',
+    textId: 'Saya dapat menjelaskan apa yang ditunjukkan oleh tabel frekuensi data kelompok kontinu.',
     sectionTarget: 1,
   },
   {
     id: 'goal-2',
-    textEn: 'I can draw a histogram with equal class widths for continuous data.',
-    textId: 'Saya dapat menggambar histogram dengan lebar kelas yang sama untuk data kontinu.',
+    textEn: 'I can draw a histogram with equal class widths for continuous data (bars touch with no gaps).',
+    textId: 'Saya dapat menggambar histogram dengan lebar kelas sama untuk data kontinu (balok berimpit tanpa celah).',
     sectionTarget: 4,
   },
   {
     id: 'goal-3',
-    textEn: 'I can draw a frequency polygon by plotting midpoints.',
-    textId: 'Saya dapat menggambar poligon frekuensi dengan memplot titik tengah (midpoint).',
+    textEn: 'I can draw a bar chart for discrete data with equal gaps between bars.',
+    textId: 'Saya dapat menggambar diagram batang untuk data diskrit dengan celah yang sama antarbalok.',
     sectionTarget: 4,
   },
   {
     id: 'goal-4',
-    textEn: 'I can read information from a histogram and a frequency polygon (modal class, totals, "how many more than...").',
-    textId: 'Saya dapat membaca informasi dari histogram dan poligon frekuensi (kelas modus, total, "berapa banyak yang lebih dari...").',
+    textEn: 'I can read information from a histogram and a bar chart (modal class, totals, comparing values).',
+    textId: 'Saya dapat membaca informasi dari histogram dan diagram batang (kelas modus, total, selisih frekuensi).',
     sectionTarget: 5,
   },
   {
     id: 'goal-5',
-    textEn: 'I can compare the two diagrams and choose the best one for a situation.',
-    textId: 'Saya dapat membandingkan kedua diagram dan memilih diagram terbaik sesuai situasi.',
+    textEn: 'I can compare histograms and bar charts and choose the right diagram for a situation.',
+    textId: 'Saya dapat membandingkan histogram dan diagram batang serta memilih diagram yang tepat sesuai jenis data.',
     sectionTarget: 3,
   },
   {
     id: 'goal-6',
-    textEn: 'I can spot common mistakes in frequency diagrams.',
-    textId: 'Saya dapat menemukan dan memperbaiki kesalahan umum pada diagram frekuensi.',
+    textEn: 'I can spot common mistakes (gaps in histograms vs touching bars in bar charts).',
+    textId: 'Saya dapat menemukan kesalahan umum (celah pada histogram vs balok menempel pada diagram batang).',
     sectionTarget: 6,
   },
 ];
@@ -173,10 +172,18 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
   {
     term: 'Continuous data',
     termId: 'Data kontinu',
-    cambridgeDefinitionEn: 'Data that can take any numeric value within an interval (e.g. height, time, mass, temperature). Measured on a continuous scale.',
-    definitionId: 'Data yang dapat memiliki nilai berapa pun dalam suatu rentang (contoh: tinggi badan, waktu, massa). Diukur dengan alat ukur.',
-    example: 'Height = 152.4 cm or time = 2.75 hours.',
+    cambridgeDefinitionEn: 'Data that can take any value within a range (e.g. height, time, mass, temperature). Measured on a continuous scale. Illustrated with a Histogram.',
+    definitionId: 'Data yang dapat memiliki nilai berapa pun dalam suatu rentang (contoh: tinggi, waktu, massa). Diukur dengan alat ukur dan digambar dengan Histogram.',
+    example: 'Screen time = 2.45 hours or height = 153.2 cm.',
     iconName: 'Ruler',
+  },
+  {
+    term: 'Discrete data',
+    termId: 'Data diskrit',
+    cambridgeDefinitionEn: 'Data that can only take specific, separate values (often counted in whole numbers, like number of siblings, goals, or pets). Illustrated with a Bar Chart.',
+    definitionId: 'Data yang nilainya terpisah atau dihitung dalam bilangan bulat (seperti jumlah saudara atau hewan peliharaan). Digambar dengan Diagram Batang.',
+    example: 'Number of siblings: 0, 1, 2, 3 (not 1.8 siblings!).',
+    iconName: 'Grid',
   },
   {
     term: 'Class interval',
@@ -189,50 +196,42 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
   {
     term: 'Frequency',
     termId: 'Frekuensi',
-    cambridgeDefinitionEn: 'The number of times a particular data value or class interval occurs in a dataset.',
-    definitionId: 'Banyaknya data atau pengamatan yang masuk ke dalam kategori atau interval kelas tertentu.',
+    cambridgeDefinitionEn: 'The number of times a particular value or class interval occurs in a dataset.',
+    definitionId: 'Banyaknya data yang masuk ke dalam kategori atau interval kelas tertentu.',
     example: 'A frequency of 9 means 9 students fall into that category.',
     iconName: 'Hash',
   },
   {
-    term: 'Midpoint',
-    termId: 'Titik tengah (Midpoint)',
-    cambridgeDefinitionEn: 'The exact middle value of a class interval. Calculated as: (Lower boundary + Upper boundary) ÷ 2.',
-    definitionId: 'Nilai tepat di tengah interval kelas. Dihitung: (Batas bawah + Batas atas) ÷ 2.',
-    example: 'For 150 ≤ h < 155, the midpoint is (150 + 155) / 2 = 152.5.',
-    iconName: 'Crosshair',
-  },
-  {
     term: 'Histogram',
     termId: 'Histogram',
-    cambridgeDefinitionEn: 'A diagram made of touching bars representing grouped continuous data. For equal class widths in Stage 8, the height of each bar represents frequency.',
-    definitionId: 'Diagram balok berimpit (tanpa celah) untuk data kontinu. Di Stage 8 dengan lebar kelas sama, tinggi balok menunjukkan frekuensi.',
-    example: 'Bars touch each other with no gaps because continuous data has no spaces between intervals.',
+    cambridgeDefinitionEn: 'A frequency diagram made of touching bars (no gaps) representing continuous grouped data. The horizontal axis is a continuous number line.',
+    definitionId: 'Diagram frekuensi balok berimpit (tanpa celah) untuk data kontinu. Sumbu horizontal berupa garis bilangan kontinu.',
+    example: 'Bars touch each other because continuous measurements have no breaks between classes.',
     iconName: 'BarChart2',
   },
   {
-    term: 'Frequency polygon',
-    termId: 'Poligon frekuensi',
-    cambridgeDefinitionEn: 'A line graph created by plotting points at (midpoint, frequency) for each class interval and connecting them with straight line segments.',
-    definitionId: 'Grafik garis yang dibuat dengan memplot titik pada (titik tengah, frekuensi) lalu menghubungkannya dengan garis lurus.',
-    example: 'Points joined with straight lines using a ruler, excellent for comparing two datasets!',
-    iconName: 'TrendingUp',
+    term: 'Bar chart',
+    termId: 'Diagram batang',
+    cambridgeDefinitionEn: 'A diagram made of separate bars with equal gaps between them, used to show discrete numerical data or categorical data.',
+    definitionId: 'Diagram yang terdiri dari balok-balok terpisah dengan celah yang sama di antaranya, digunakan untuk data diskrit atau kategorikal.',
+    example: 'Bars have spaces between them because categories (or whole number counts) are separate.',
+    iconName: 'BarChart2',
   },
   {
     term: 'Modal class',
     termId: 'Kelas modus',
-    cambridgeDefinitionEn: 'The class interval with the highest frequency (the tallest bar in a histogram or highest peak on a polygon).',
-    definitionId: 'Interval kelas yang memiliki frekuensi tertinggi (balok paling tinggi atau puncak tertinggi).',
-    example: 'In the phone data, the modal class is 2 ≤ t < 3 because its frequency is 9.',
+    cambridgeDefinitionEn: 'The class interval with the highest frequency (the tallest bar in a histogram).',
+    definitionId: 'Interval kelas yang memiliki frekuensi tertinggi (balok paling tinggi pada histogram).',
+    example: 'In the screen time data, the modal class is 2 ≤ t < 3 because it has the tallest bar (frequency 9).',
     iconName: 'Award',
   },
   {
-    term: 'Discrete data',
-    termId: 'Data diskrit',
-    cambridgeDefinitionEn: 'Data that can only take specific, separate values (often counted in whole numbers, like number of siblings or pets).',
-    definitionId: 'Data yang nilainya terpisah atau dihitung dalam bilangan bulat (seperti jumlah saudara atau hewan peliharaan).',
-    example: 'Number of pens in a pencil case: 1, 2, 3 (not 2.37 pens!).',
-    iconName: 'Grid',
+    term: 'Frequency table',
+    termId: 'Tabel frekuensi',
+    cambridgeDefinitionEn: 'A table that lists all categories or class intervals alongside their corresponding frequencies.',
+    definitionId: 'Tabel yang menyajikan kategori atau interval kelas beserta jumlah frekuensinya.',
+    example: 'A table showing intervals 0 ≤ t < 1, 1 ≤ t < 2 and the count of students for each.',
+    iconName: 'Layers',
   },
 ];
 
@@ -284,7 +283,7 @@ export const SCREEN_TIME_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 14,
     hintEn: 'Sum the bars starting from boundary 3 to the right: (3 ≤ t < 4), (4 ≤ t < 5), (5 ≤ t < 6).',
     hintId: 'Jumlahkan balok mulai dari angka 3 ke kanan: 8 + 4 + 2.',
-    explanationEn: 'Students with 3 hours or more: 8 (for 3-4 hrs) + 4 (for 4-5 hrs) + 2 (for 5-6 hrs) = 14 students.',
+    explanationEn: 'Students with 3 hours or more: 8 + 4 + 2 = 14 students.',
     explanationId: 'Frekuensi yang dijumlahkan: 8 + 4 + 2 = 14 siswa.',
   },
   {
@@ -295,8 +294,8 @@ export const SCREEN_TIME_QUESTIONS: QuizQuestion[] = [
     questionId: 'Berapa pecahan dari 30 siswa yang menggunakan ponselnya kurang dari 2 jam?',
     options: ['7/30', '5/30', '9/30', '2/30'],
     correctAnswer: '7/30',
-    hintEn: 'Earlier we found that 7 students use their phone for less than 2 hours. What is the total?',
-    hintId: 'Tadi kita temukan 7 siswa menggunakan kurang dari 2 jam. Berapa total siswa?',
+    hintEn: 'Earlier we found that 7 students use their phone for less than 2 hours out of 30 students.',
+    hintId: 'Tadi kita temukan 7 siswa menggunakan kurang dari 2 jam dari total 30 siswa.',
     explanationEn: 'There are 7 students out of 30 total students, so the fraction is 7/30.',
     explanationId: 'Terdapat 7 siswa dari total 30 siswa, jadi pecahannya adalah 7/30.',
   },
@@ -304,100 +303,76 @@ export const SCREEN_TIME_QUESTIONS: QuizQuestion[] = [
     id: 'st-q6',
     datasetId: 'screen-time',
     type: 'true-false',
-    questionEn: 'True or False: "Exactly 9 students use their phone for exactly 2.5 hours."',
-    questionId: 'Benar atau Salah: "Tepat 9 siswa menggunakan ponselnya tepat 2,5 jam."',
+    questionEn: 'True or False: "Because the data is grouped, we cannot know the exact screen time of an individual student."',
+    questionId: 'Benar atau Salah: "Karena data berkelompok, kita tidak dapat mengetahui waktu pasti dari siswa tertentu."',
     options: ['True', 'False'],
-    correctAnswer: 'False',
-    hintEn: 'Does grouped data tell us individual exact values?',
-    hintId: 'Apakah data berkelompok memberi tahu nilai individu yang pasti?',
-    explanationEn: 'False! With grouped data, we only know that 9 students had screen times between 2 and 3 hours. Some could be 2.1 h, others 2.9 h. We do NOT know individual exact values.',
-    explanationId: 'Salah! Pada data berkelompok, kita hanya tahu 9 siswa berada di rentang 2 sampai 3 jam, bukan nilai pastinya.',
+    correctAnswer: 'True',
+    hintEn: 'Does grouped continuous data store individual measurements or only interval counts?',
+    hintId: 'Apakah data berkelompok menyimpan nilai individu atau hanya jumlah per interval?',
+    explanationEn: 'True! Grouped continuous data tells us how many students are in each interval, but the individual exact numbers are lost.',
+    explanationId: 'Benar! Pada data kelompok, kita hanya tahu banyaknya data per interval, bukan nilai individu secara pasti.',
   },
 ];
 
-export const HEIGHTS_QUESTIONS: QuizQuestion[] = [
+export const SIBLINGS_QUESTIONS: QuizQuestion[] = [
   {
-    id: 'ht-q1',
-    datasetId: 'heights',
-    type: 'number-input',
-    questionEn: 'What is the midpoint of the class 150 ≤ h < 155?',
-    questionId: 'Berapakah titik tengah (midpoint) dari kelas 150 ≤ h < 155?',
-    correctAnswer: 152.5,
-    hintEn: 'Formula: (lower boundary + upper boundary) ÷ 2 = (150 + 155) ÷ 2.',
-    hintId: 'Rumus: (150 + 155) ÷ 2.',
-    explanationEn: '(150 + 155) ÷ 2 = 305 ÷ 2 = 152.5 cm.',
-    explanationId: 'Titik tengahnya adalah (150 + 155) / 2 = 152,5 cm.',
-  },
-  {
-    id: 'ht-q2',
-    datasetId: 'heights',
+    id: 'sib-q1',
+    datasetId: 'siblings-data',
     type: 'multiple-choice',
-    questionEn: 'Which class is the modal class?',
-    questionId: 'Kelas manakah yang merupakan kelas modus?',
-    options: ['145 ≤ h < 150', '150 ≤ h < 155', '155 ≤ h < 160', '160 ≤ h < 165'],
-    correctAnswer: '150 ≤ h < 155',
-    hintEn: 'Look for the highest peak point on the frequency polygon.',
-    hintId: 'Cari titik puncak tertinggi pada poligon frekuensi.',
-    explanationEn: 'The highest plotted point is at frequency 14, which belongs to the class 150 ≤ h < 155.',
-    explanationId: 'Titik puncak tertinggi adalah pada frekuensi 14, yaitu kelas 150 ≤ h < 155.',
+    questionEn: 'What is the modal number of siblings?',
+    questionId: 'Berapakah modus jumlah saudara kandung?',
+    options: ['0 siblings', '1 sibling', '2 siblings', '3 siblings'],
+    correctAnswer: '1 sibling',
+    hintEn: 'Look for the tallest bar on the bar chart!',
+    hintId: 'Cari balok tertinggi pada diagram batang!',
+    explanationEn: 'The tallest bar has a frequency of 16, which is for students with 1 sibling.',
+    explanationId: 'Balok tertinggi memiliki frekuensi 16, yaitu untuk siswa dengan 1 saudara.',
   },
   {
-    id: 'ht-q3',
-    datasetId: 'heights',
+    id: 'sib-q2',
+    datasetId: 'siblings-data',
     type: 'number-input',
-    questionEn: 'How many girls are shorter than 155 cm?',
-    questionId: 'Berapa banyak siswi yang tingginya kurang dari 155 cm?',
-    correctAnswer: 25,
-    hintEn: 'Add the frequencies of the first 3 classes: (140-145) + (145-150) + (150-155).',
-    hintId: 'Jumlahkan 3 kelas pertama: 3 + 8 + 14.',
-    explanationEn: 'Frequencies for heights under 155 cm: 3 + 8 + 14 = 25 girls.',
-    explanationId: 'Jumlah siswi: 3 + 8 + 14 = 25 orang.',
+    questionEn: 'How many students have 2 or more siblings?',
+    questionId: 'Berapa banyak siswa yang memiliki 2 saudara atau lebih?',
+    correctAnswer: 18,
+    hintEn: 'Add the frequencies for 2 siblings (12), 3 siblings (4), and 4+ siblings (2).',
+    hintId: 'Jumlahkan frekuensi: 12 + 4 + 2.',
+    explanationEn: '12 + 4 + 2 = 18 students have 2 or more siblings.',
+    explanationId: '12 + 4 + 2 = 18 siswa.',
   },
   {
-    id: 'ht-q4',
-    datasetId: 'heights',
+    id: 'sib-q3',
+    datasetId: 'siblings-data',
     type: 'number-input',
-    questionEn: 'How many girls are 160 cm or taller?',
-    questionId: 'Berapa banyak siswi yang tingginya 160 cm atau lebih?',
-    correctAnswer: 5,
-    hintEn: 'Look at the class with lower boundary 160: 160 ≤ h < 165.',
-    hintId: 'Lihat frekuensi untuk kelas 160 ≤ h < 165.',
-    explanationEn: 'The class 160 ≤ h < 165 has a frequency of 5 girls.',
-    explanationId: 'Frekuensi kelas 160 ≤ h < 165 adalah 5 orang.',
+    questionEn: 'How many students are only children (have 0 siblings)?',
+    questionId: 'Berapa banyak siswa yang merupakan anak tunggal (memiliki 0 saudara)?',
+    correctAnswer: 6,
+    hintEn: 'Read the height of the first bar (0 siblings).',
+    hintId: 'Baca tinggi balok pertama (0 saudara).',
+    explanationEn: 'The bar for 0 siblings has a height of 6 students.',
+    explanationId: 'Tinggi balok untuk 0 saudara adalah 6 siswa.',
   },
   {
-    id: 'ht-q5',
-    datasetId: 'heights',
-    type: 'number-input',
-    questionEn: 'How many more girls are in the 150–155 class than in the 140–145 class?',
-    questionId: 'Berapa selisih banyaknya siswi di kelas 150–155 dibandingkan kelas 140–145?',
-    correctAnswer: 11,
-    hintEn: 'Subtract the frequency of 140–145 from the frequency of 150–155.',
-    hintId: 'Kurangkan frekuensi 140–145 dari frekuensi 150–155: 14 - 3.',
-    explanationEn: '14 - 3 = 11 more girls in the 150–155 class.',
-    explanationId: 'Selisihnya adalah 14 - 3 = 11 siswi.',
-  },
-  {
-    id: 'ht-q6',
-    datasetId: 'heights',
+    id: 'sib-q4',
+    datasetId: 'siblings-data',
     type: 'multiple-choice',
-    questionEn: 'Why do we join the points with straight lines, and why is it NOT exact to say "the tallest girl is 165 cm"?',
-    questionId: 'Mengapa kita menghubungkan titik dengan garis lurus, dan mengapa tidak tepat mengatakan "siswi tertinggi tepat 165 cm"?',
+    questionEn: 'Why are there gaps between the bars in this diagram?',
+    questionId: 'Mengapa ada celah di antara balok-balok pada diagram ini?',
     options: [
-      'Because straight lines guide the eye between grouped intervals; the tallest girl is in 160 ≤ h < 165 but her exact height is unknown.',
-      'Because curves are illegal in mathematics; 165 cm is definitely the tallest girl.',
-      'Because a ruler is faster; the tallest girl must be 160 cm.',
-      'Because we do not have enough ink to draw bars.',
+      'Because number of siblings is discrete data; you cannot have 1.5 siblings, so bars must have gaps.',
+      'Because the printer ran out of ink.',
+      'Because the teacher made a mistake.',
+      'Because bars should always have gaps in every math chart.',
     ],
-    correctAnswer: 'Because straight lines guide the eye between grouped intervals; the tallest girl is in 160 ≤ h < 165 but her exact height is unknown.',
-    hintEn: 'Think about Cambridge mathematical convention and what grouped data conceals.',
-    hintId: 'Pikirkan aturan konvensi matematika Cambridge dan keterbatasan data berkelompok.',
-    explanationEn: 'Cambridge convention uses straight line segments (polygons) between plotted midpoints. Since the data is grouped (160 ≤ h < 165), the tallest girl could be 161 cm, 163.2 cm, or 164.8 cm, but not strictly 165 cm!',
-    explanationId: 'Garis lurus menghubungkan titik tengah untuk menunjukkan tren. Nilai pasti siswi tertinggi tidak dapat diketahui dari data kelompok.',
+    correctAnswer: 'Because number of siblings is discrete data; you cannot have 1.5 siblings, so bars must have gaps.',
+    hintEn: 'Recall the Cambridge rule: Discrete data uses Bar Charts with gaps between bars.',
+    hintId: 'Ingat aturan Cambridge: Data diskrit menggunakan Diagram Batang dengan celah.',
+    explanationEn: 'Correct! Discrete data can only take separate whole-number values. In a bar chart, equal spaces (gaps) separate the bars.',
+    explanationId: 'Benar! Data diskrit memiliki nilai terpisah, sehingga balok diagram batang harus memiliki celah.',
   },
 ];
 
-// 5. Section 6 Practice Level 1 Questions (Reading Time)
+// 5. Section 6 Practice Level 1 Questions (Reading Time Histogram)
 export const PRACTICE_L1_QUESTIONS: QuizQuestion[] = [
   {
     id: 'p1-q1',
@@ -451,75 +426,81 @@ export const PRACTICE_L1_QUESTIONS: QuizQuestion[] = [
   {
     id: 'p1-q5',
     datasetId: 'reading-time',
-    type: 'number-input',
-    questionEn: 'What is the midpoint of the class interval 6 ≤ t < 8?',
-    questionId: 'Berapakah titik tengah dari interval kelas 6 ≤ t < 8?',
-    correctAnswer: 7,
-    hintEn: '(6 + 8) ÷ 2 = ?',
-    hintId: '(6 + 8) ÷ 2 = ?',
-    explanationEn: '(6 + 8) ÷ 2 = 14 ÷ 2 = 7.',
-    explanationId: '(6 + 8) ÷ 2 = 7.',
+    type: 'multiple-choice',
+    questionEn: 'Why do the bars touch each other in this reading diagram?',
+    questionId: 'Mengapa balok-balok saling berimpit pada diagram membaca ini?',
+    options: [
+      'Because reading time is continuous data, so it is a histogram with touching bars.',
+      'Because the students like reading together.',
+      'Because it is a regular bar chart.',
+      'Because all bars have the same height.',
+    ],
+    correctAnswer: 'Because reading time is continuous data, so it is a histogram with touching bars.',
+    hintEn: 'Continuous time has no breaks between intervals, so histogram bars must touch!',
+    hintId: 'Waktu adalah data kontinu, sehingga balok histogram harus berimpit tanpa celah!',
+    explanationEn: 'Because time is continuous, classes flow directly into one another (e.g. 0 to 2, then 2 to 4), so the bars touch.',
+    explanationId: 'Karena waktu adalah data kontinu, balok histogram harus berimpit tanpa celah.',
   },
 ];
 
-// 6. Section 6 Practice Level 3 Detective & Challenge Questions
+// 6. Section 6 Practice Level 3 Detective Questions
 export const SPOT_MISTAKE_ITEMS: SpotMistakeItem[] = [
   {
     id: 'mistake-1',
-    title: 'Chart A: Run times of runners',
-    description: 'A student drew a histogram for continuous marathon run times, but left empty spaces between each bar.',
+    title: 'Chart A: Race completion times (Continuous Data)',
+    description: 'A student drew a diagram for continuous sprint times in seconds, but left empty spaces (gaps) between every bar.',
     faultType: 'gap-in-continuous',
     options: [
       {
         id: 'opt-1a',
-        textEn: 'Mistake: Bars have gaps between them. For continuous data, bars in a histogram must touch with no gaps.',
+        textEn: 'Mistake: Bars have gaps between them. For continuous data, a histogram must have touching bars (no gaps).',
         isCorrect: true,
-        explanationEn: 'Correct! Continuous data flows continuously without breaks. In a histogram, the bars must touch.',
+        explanationEn: 'Correct! Continuous data flows uninterrupted. In a histogram, the bars must touch.',
       },
       {
         id: 'opt-1b',
-        textEn: 'Mistake: The title is missing a date.',
+        textEn: 'Mistake: Sprint times should only be measured in hours.',
         isCorrect: false,
-        explanationEn: 'Not the main mathematical error. The fundamental error is the gaps between bars.',
+        explanationEn: 'Seconds is the standard unit for sprint times.',
       },
       {
         id: 'opt-1c',
-        textEn: 'Mistake: The bars should be drawn horizontally.',
+        textEn: 'Mistake: Bars should be drawn horizontally.',
         isCorrect: false,
-        explanationEn: 'Histograms can be drawn vertically as standard in Cambridge stage 8.',
+        explanationEn: 'Histograms are typically drawn with vertical bars.',
       },
     ],
   },
   {
     id: 'mistake-2',
-    title: 'Chart B: Plant heights polygon',
-    description: 'A student plotted points for a frequency polygon at the upper boundaries (e.g. at x = 10, 20, 30) instead of the midpoints (x = 5, 15, 25).',
-    faultType: 'wrong-polygon-plotting',
+    title: 'Chart B: Shoe sizes of Year 8 students (Discrete Data)',
+    description: 'A student drew a diagram for shoe sizes (sizes 36, 37, 38, 39), but drew the bars touching each other with no gaps.',
+    faultType: 'touching-in-discrete',
     options: [
       {
         id: 'opt-2a',
-        textEn: 'Mistake: Points are plotted at the class upper boundary instead of the midpoint of each class interval.',
+        textEn: 'Mistake: Bars are touching. Shoe sizes are discrete values, so a bar chart with equal gaps between bars should be drawn.',
         isCorrect: true,
-        explanationEn: 'Spot on! In a frequency polygon, each point must be plotted at the MIDPOINT of the class interval (not the start or end).',
+        explanationEn: 'Spot on! Discrete numerical categories are separate values. Bars in a bar chart MUST have spaces between them!',
       },
       {
         id: 'opt-2b',
-        textEn: 'Mistake: The lines connecting points are too straight.',
+        textEn: 'Mistake: Shoe sizes should be measured in kilograms.',
         isCorrect: false,
-        explanationEn: 'Frequency polygons must use straight lines drawn with a ruler!',
+        explanationEn: 'Kilograms is a unit of mass, not shoe size.',
       },
       {
         id: 'opt-2c',
-        textEn: 'Mistake: The frequency axis should start from 10.',
+        textEn: 'Mistake: The chart has too many bars.',
         isCorrect: false,
-        explanationEn: 'The frequency axis should normally start from 0.',
+        explanationEn: 'The number of bars is fine; the error is that the discrete bars touch.',
       },
     ],
   },
   {
     id: 'mistake-3',
-    title: 'Chart C: Daily water intake',
-    description: 'The vertical frequency scale marks: 0, 2, 5, 6, 12, 15 with irregular spacing.',
+    title: 'Chart C: Daily water intake (Continuous Data)',
+    description: 'The vertical frequency scale marks: 0, 2, 5, 6, 12, 15 with irregular, uneven spacing between gridlines.',
     faultType: 'uneven-scale',
     options: [
       {
@@ -536,9 +517,9 @@ export const SPOT_MISTAKE_ITEMS: SpotMistakeItem[] = [
       },
       {
         id: 'opt-3c',
-        textEn: 'Mistake: The line colours are too light.',
+        textEn: 'Mistake: The chart bars are too wide.',
         isCorrect: false,
-        explanationEn: 'The mathematical flaw is the non-linear, uneven numerical scale.',
+        explanationEn: 'The mathematical flaw is the non-linear, irregular numerical scale on the frequency axis.',
       },
     ],
   },

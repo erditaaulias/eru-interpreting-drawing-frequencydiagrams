@@ -39,14 +39,13 @@ export const Histogram: React.FC<HistogramProps> = ({
   const minBound = classes[0].lower;
   const maxBound = classes[classes.length - 1].upper;
   const highestFreq = maxFreq ?? Math.max(...classes.map(c => c.frequency), 1);
-  // Round up y-axis ceiling for clean ticks
   const yCeil = Math.ceil(highestFreq * 1.15);
   const yTicksCount = yCeil <= 10 ? yCeil : 5;
   const yTicks = Array.from({ length: yTicksCount + 1 }, (_, i) => 
     Math.round((yCeil / yTicksCount) * i)
   ).filter((v, idx, arr) => arr.indexOf(v) === idx);
 
-  // SVG coordinate system
+  // SVG dimensions
   const svgWidth = 520;
   const svgHeight = 310;
   const margin = { top: 35, right: 30, bottom: 55, left: 55 };
@@ -62,12 +61,12 @@ export const Histogram: React.FC<HistogramProps> = ({
   };
 
   return (
-    <div className={`relative bg-white rounded-3xl p-4 shadow-sm border border-[#E9D5FF] ${className}`}>
+    <div className={`relative bg-white rounded-3xl p-4 shadow-sm border-2 border-[#EAB308]/40 hover:border-[#EAB308] transition-colors ${className}`}>
       {title && (
         <div className="text-center mb-2">
-          <h4 className="font-bold text-[#4C1D95] text-base md:text-lg">{title}</h4>
-          <span className="text-xs text-[#7C3AED] bg-[#EDE9FE] px-2.5 py-0.5 rounded-full inline-block mt-0.5">
-            Histogram (Continuous Data • Touching Bars)
+          <h4 className="font-extrabold text-[#18181B] text-base md:text-lg">{title}</h4>
+          <span className="text-xs text-[#18181B] bg-[#FEF08A] font-extrabold px-3 py-0.5 rounded-full inline-block mt-0.5 border border-[#EAB308] shadow-xs">
+            📊 Histogram (Continuous Data • Touching Bars)
           </span>
         </div>
       )}
@@ -89,15 +88,15 @@ export const Histogram: React.FC<HistogramProps> = ({
                   y1={yPos}
                   x2={svgWidth - margin.right}
                   y2={yPos}
-                  stroke="#EDE9FE"
-                  strokeWidth="1.5"
+                  stroke="#F3F4F6"
+                  strokeWidth="1.2"
                   strokeDasharray={tick === 0 ? 'none' : '3,3'}
                 />
                 <text
                   x={margin.left - 10}
                   y={yPos + 4}
                   textAnchor="end"
-                  className="text-[12px] fill-[#6D28D9] font-semibold"
+                  className="text-[12px] fill-[#18181B] font-bold"
                 >
                   {tick}
                 </text>
@@ -111,7 +110,7 @@ export const Histogram: React.FC<HistogramProps> = ({
             x={margin.left - 35}
             y={margin.top + plotHeight / 2}
             textAnchor="middle"
-            className="text-[13px] fill-[#4C1D95] font-bold tracking-wide"
+            className="text-[13px] fill-[#18181B] font-black tracking-wide"
           >
             Frequency (Number of students)
           </text>
@@ -128,17 +127,14 @@ export const Histogram: React.FC<HistogramProps> = ({
             const isSelected = selectedBar === idx;
             const isHighlighted = highlightIndex === idx;
 
-            let fillColor = '#DDD6FE'; // soft lavender
-            let strokeColor = '#7C3AED';
+            // Vibrant, cute sunny yellows with crisp black outlines
+            let fillColor = idx % 2 === 0 ? '#FACC15' : '#FBBF24';
+            let strokeColor = '#18181B';
 
             if (isSelected || isHighlighted) {
-              fillColor = '#FDBA74'; // warm peach highlight
-              strokeColor = '#EA580C';
+              fillColor = '#F59E0B'; // warm amber on highlight
             } else if (isHovered) {
-              fillColor = '#99F6E4'; // mint highlight on hover
-              strokeColor = '#0D9488';
-            } else if (idx % 2 === 1) {
-              fillColor = '#C4B5FD'; // subtle alternation
+              fillColor = '#FEF08A'; // bright pastel yellow on hover
             }
 
             const midpoint = (cls.lower + cls.upper) / 2;
@@ -160,21 +156,20 @@ export const Histogram: React.FC<HistogramProps> = ({
                   height={barH}
                   fill={fillColor}
                   stroke={strokeColor}
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   className="transition-colors duration-200"
                 />
 
-                {/* Optional Midpoint marker line inside bar */}
+                {/* Optional Midpoint line inside bar */}
                 {showMidpointLines && (
                   <line
                     x1={midX}
                     y1={yTop}
                     x2={midX}
                     y2={margin.top + plotHeight}
-                    stroke="#4C1D95"
-                    strokeWidth="1.5"
+                    stroke="#18181B"
+                    strokeWidth="2"
                     strokeDasharray="2,2"
-                    opacity="0.6"
                   />
                 )}
 
@@ -186,15 +181,17 @@ export const Histogram: React.FC<HistogramProps> = ({
                       y={yTop - 20}
                       width="24"
                       height="16"
-                      rx="8"
-                      fill={isHovered || isHighlighted ? '#4C1D95' : '#EDE9FE'}
+                      rx="6"
+                      fill={isHovered || isHighlighted ? '#18181B' : '#FEF08A'}
+                      stroke="#18181B"
+                      strokeWidth="1.5"
                     />
                     <text
                       x={midX}
                       y={yTop - 8}
                       textAnchor="middle"
-                      className={`text-[11px] font-bold ${
-                        isHovered || isHighlighted ? 'fill-white' : 'fill-[#5B21B6]'
+                      className={`text-[11px] font-black ${
+                        isHovered || isHighlighted ? 'fill-[#FACC15]' : 'fill-[#18181B]'
                       }`}
                     >
                       {cls.frequency}
@@ -211,8 +208,8 @@ export const Histogram: React.FC<HistogramProps> = ({
             y1={margin.top + plotHeight}
             x2={svgWidth - margin.right}
             y2={margin.top + plotHeight}
-            stroke="#4C1D95"
-            strokeWidth="2.5"
+            stroke="#18181B"
+            strokeWidth="3"
             strokeLinecap="round"
           />
           <line
@@ -220,8 +217,8 @@ export const Histogram: React.FC<HistogramProps> = ({
             y1={margin.top}
             x2={margin.left}
             y2={margin.top + plotHeight}
-            stroke="#4C1D95"
-            strokeWidth="2.5"
+            stroke="#18181B"
+            strokeWidth="3"
             strokeLinecap="round"
           />
 
@@ -235,14 +232,14 @@ export const Histogram: React.FC<HistogramProps> = ({
                   y1={margin.top + plotHeight}
                   x2={xPos}
                   y2={margin.top + plotHeight + 6}
-                  stroke="#4C1D95"
+                  stroke="#18181B"
                   strokeWidth="2"
                 />
                 <text
                   x={xPos}
                   y={margin.top + plotHeight + 20}
                   textAnchor="middle"
-                  className="text-[12px] fill-[#4C1D95] font-bold"
+                  className="text-[12px] fill-[#18181B] font-bold"
                 >
                   {boundary}
                 </text>
@@ -255,7 +252,7 @@ export const Histogram: React.FC<HistogramProps> = ({
             x={margin.left + plotWidth / 2}
             y={svgHeight - 10}
             textAnchor="middle"
-            className="text-[13px] fill-[#4C1D95] font-bold"
+            className="text-[13px] fill-[#18181B] font-black"
           >
             {variableName} ({unit})
           </text>
@@ -264,12 +261,12 @@ export const Histogram: React.FC<HistogramProps> = ({
 
       {/* Interactive Tooltip Card at Bottom */}
       {hoveredIdx !== null && (
-        <div className="mt-2 text-center text-xs md:text-sm font-semibold bg-[#F5F3FF] border border-[#DDD6FE] py-1.5 px-3 rounded-xl text-[#4C1D95] animate-fadeIn">
-          Class: <span className="font-bold text-[#7C3AED]">{classes[hoveredIdx].lower} ≤ {symbol} &lt; {classes[hoveredIdx].upper} {unit}</span>
+        <div className="mt-2 text-center text-xs md:text-sm font-semibold bg-[#FEF08A] border-2 border-[#18181B] py-1.5 px-3 rounded-2xl text-[#18181B] shadow-xs animate-fadeIn">
+          Class: <span className="font-black text-[#18181B] underline decoration-[#EAB308]">{classes[hoveredIdx].lower} ≤ {symbol} &lt; {classes[hoveredIdx].upper} {unit}</span>
           {' • '}
-          Frequency: <span className="font-bold text-[#EA580C]">{classes[hoveredIdx].frequency} students</span>
+          Frequency: <span className="font-black text-[#B45309]">{classes[hoveredIdx].frequency} students</span>
           {' • '}
-          Midpoint: <span className="font-bold text-[#0D9488]">{(classes[hoveredIdx].lower + classes[hoveredIdx].upper) / 2}</span>
+          Midpoint: <span className="font-black text-[#18181B]">{(classes[hoveredIdx].lower + classes[hoveredIdx].upper) / 2}</span>
         </div>
       )}
     </div>

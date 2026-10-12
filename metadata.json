@@ -1,6 +1,6 @@
 {
   "name": "Frequency Diagrams | Cambridge Stage 8 Math",
-  "description": "Interactive Cambridge Lower Secondary Mathematics Stage 8 lesson on interpreting and drawing frequency diagrams, histograms, and frequency polygons.",
+  "description": "Interactive Cambridge Lower Secondary Mathematics Stage 8 lesson on interpreting and drawing frequency diagrams: histograms and bar charts.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

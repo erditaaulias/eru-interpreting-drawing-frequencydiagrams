@@ -35,22 +35,22 @@ export const Navbar: React.FC<NavbarProps> = ({
   const progressPercent = Math.round((completedSections.length / 7) * 100);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E9D5FF] shadow-xs">
+    <header className="sticky top-0 z-40 bg-[#FEFCE8]/95 backdrop-blur-md border-b-2 border-[#EAB308]/40 shadow-xs">
       {/* Top utility row */}
-      <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
+      <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
         {/* Brand / Logo */}
         <div
           onClick={() => onNavigate(1)}
-          className="cursor-pointer flex items-center gap-2 select-none"
+          className="cursor-pointer flex items-center gap-2.5 select-none"
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#7C3AED] to-[#EC4899] flex items-center justify-center text-white font-black text-sm shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-[#FACC15] border-2 border-[#18181B] flex items-center justify-center text-[#18181B] font-black text-sm shadow-xs">
             16.1
           </div>
           <div>
-            <h1 className="font-extrabold text-[#4C1D95] text-xs sm:text-sm tracking-tight leading-none">
+            <h1 className="font-extrabold text-[#18181B] text-xs sm:text-sm tracking-tight leading-none">
               Frequency Diagrams
             </h1>
-            <span className="text-[10px] text-[#7C3AED] font-semibold">
+            <span className="text-[10px] text-[#B45309] font-bold">
               Cambridge Stage 8 Math
             </span>
           </div>
@@ -59,43 +59,43 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Global Action Badges */}
         <div className="flex items-center gap-2">
           {/* Star Counter */}
-          <div className="hidden sm:flex items-center gap-1 bg-[#FEF3C7] px-2.5 py-1 rounded-xl border border-[#FDE68A] text-xs font-black text-[#92400E]">
-            <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+          <div className="hidden sm:flex items-center gap-1.5 bg-[#FEF08A] px-3 py-1 rounded-xl border-2 border-[#18181B] text-xs font-black text-[#18181B] shadow-xs">
+            <Star className="w-3.5 h-3.5 fill-[#EAB308] text-[#CA8A04]" />
             <span>{totalStars} / 3 Stars</span>
           </div>
 
           {/* Bahasa Indonesia Hint Toggle */}
           <button
             onClick={onToggleIdHint}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 shadow-xs ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-black border-2 transition-all flex items-center gap-1 shadow-xs ${
               showIdHint
-                ? 'bg-[#CCFBF1] text-[#0F766E] border-[#14B8A6] ring-1 ring-[#14B8A6]'
-                : 'bg-white text-[#7C3AED] border-[#DDD6FE] hover:bg-[#FAF5FF]'
+                ? 'bg-[#FACC15] text-[#18181B] border-[#18181B] ring-2 ring-[#EAB308]'
+                : 'bg-white text-[#18181B] border-[#18181B]/30 hover:bg-[#FEF08A]'
             }`}
             title="Toggle Bahasa Indonesia translations and hints"
           >
             <Globe className="w-3.5 h-3.5" />
-            <span className="font-black">ID</span>
+            <span>ID</span>
             <span className="text-[10px] hidden md:inline">{showIdHint ? 'Hints ON' : 'Hints OFF'}</span>
           </button>
 
           {/* Glossary Drawer Toggle */}
           <button
             onClick={onOpenGlossary}
-            className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#FAF5FF] hover:bg-[#EDE9FE] text-[#4C1D95] border border-[#DDD6FE] transition-colors flex items-center gap-1 shadow-xs"
+            className="px-2.5 py-1 rounded-xl text-xs font-bold bg-white hover:bg-[#FEF08A] text-[#18181B] border-2 border-[#18181B]/30 transition-colors flex items-center gap-1 shadow-xs"
             title="Open Math Glossary"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#7C3AED]" />
+            <BookOpen className="w-3.5 h-3.5 text-[#B45309]" />
             <span className="hidden sm:inline">Glossary</span>
           </button>
 
           {/* Teacher Mode Toggle */}
           <button
             onClick={onOpenTeacherMode}
-            className="px-2.5 py-1 rounded-xl text-xs font-bold bg-white hover:bg-[#FAF5FF] text-[#6D28D9] border border-[#C4B5FD] transition-colors flex items-center gap-1 shadow-xs"
+            className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#FEF08A] hover:bg-[#FDE047] text-[#18181B] border-2 border-[#18181B] transition-colors flex items-center gap-1 shadow-xs"
             title="Open Teacher Dashboard, Lesson Timings & Answers"
           >
-            <GraduationCap className="w-3.5 h-3.5 text-[#7C3AED]" />
+            <GraduationCap className="w-3.5 h-3.5 text-[#18181B]" />
             <span className="hidden sm:inline">Teacher</span>
           </button>
         </div>
@@ -112,14 +112,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={s.id}
                 onClick={() => onNavigate(s.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-[#7C3AED] text-white shadow-xs'
-                    : 'text-[#6D28D9] hover:bg-[#FAF5FF]'
+                    ? 'bg-[#FACC15] text-[#18181B] shadow-xs border-2 border-[#18181B]'
+                    : 'text-[#18181B] hover:bg-[#FEF08A]'
                 }`}
               >
                 {isCompleted && (
-                  <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#99F6E4]' : 'text-[#10B981]'}`} />
+                  <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#18181B]' : 'text-[#CA8A04]'}`} />
                 )}
                 <span>{s.label}</span>
               </button>
@@ -128,10 +128,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
       </div>
 
-      {/* Thin animated Progress bar */}
-      <div className="w-full bg-[#EDE9FE] h-1">
+      {/* Progress Bar (Sunny Yellow to Warm Amber) */}
+      <div className="w-full bg-[#FEF08A]/40 h-2">
         <div
-          className="bg-gradient-to-r from-[#7C3AED] via-[#EC4899] to-[#14B8A6] h-1 transition-all duration-300"
+          className="bg-gradient-to-r from-[#FACC15] via-[#F59E0B] to-[#18181B] h-2 transition-all duration-300"
           style={{ width: `${Math.max(14, progressPercent)}%` }}
         />
       </div>

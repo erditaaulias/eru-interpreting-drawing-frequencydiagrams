@@ -36,121 +36,130 @@ export const StatCat: React.FC<StatCatProps> = ({
           role="img"
         >
           {/* Soft shadow */}
-          <ellipse cx="60" cy="112" rx="42" ry="7" fill="#E9D5FF" opacity="0.6" />
+          <ellipse cx="60" cy="112" rx="42" ry="7" fill="#E4E4E7" opacity="0.8" />
 
           {/* Cat Body */}
           <path
             d="M 35 110 C 35 75, 85 75, 85 110 Z"
-            fill="#DDD6FE"
-            stroke="#4C1D95"
+            fill="#FEF08A"
+            stroke="#18181B"
             strokeWidth="3.5"
             strokeLinejoin="round"
           />
+
+          {/* Cat Collar in Black with Gold Bell */}
+          <path
+            d="M 42 100 Q 60 108 78 100"
+            stroke="#18181B"
+            strokeWidth="5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Gold Bell */}
+          <circle cx="60" cy="105" r="5" fill="#FACC15" stroke="#18181B" strokeWidth="2" />
+          <circle cx="60" cy="106" r="1.5" fill="#18181B" />
 
           {/* Cat Head */}
           <circle
             cx="60"
             cy="62"
             r="38"
-            fill="#EDE9FE"
-            stroke="#4C1D95"
+            fill="#FEF9C3"
+            stroke="#18181B"
             strokeWidth="3.5"
           />
 
           {/* Ears */}
           <polygon
             points="32,36 44,14 55,30"
-            fill="#DDD6FE"
-            stroke="#4C1D95"
+            fill="#FEF08A"
+            stroke="#18181B"
             strokeWidth="3.5"
             strokeLinejoin="round"
           />
           <polygon
             points="35,33 44,19 51,29"
-            fill="#FBCFE8"
+            fill="#FDE047"
           />
           <polygon
             points="88,36 76,14 65,30"
-            fill="#DDD6FE"
-            stroke="#4C1D95"
+            fill="#FEF08A"
+            stroke="#18181B"
             strokeWidth="3.5"
             strokeLinejoin="round"
           />
           <polygon
             points="85,33 76,19 69,29"
-            fill="#FBCFE8"
+            fill="#FDE047"
           />
 
-          {/* Detective Hat or Graduate Cap if detective */}
+          {/* Detective Hat or Graduate Cap or Party hat */}
           {mood === 'detective' ? (
             <g>
-              <ellipse cx="60" cy="27" rx="36" ry="9" fill="#FDBA74" stroke="#4C1D95" strokeWidth="3" />
-              <path d="M 38 27 C 38 12, 82 12, 82 27 Z" fill="#FED7AA" stroke="#4C1D95" strokeWidth="3" />
-              <rect x="55" y="16" width="10" height="7" rx="2" fill="#4C1D95" />
+              <ellipse cx="60" cy="27" rx="36" ry="9" fill="#FACC15" stroke="#18181B" strokeWidth="3" />
+              <path d="M 38 27 C 38 12, 82 12, 82 27 Z" fill="#FDE047" stroke="#18181B" strokeWidth="3" />
+              {/* Hat Ribbon */}
+              <line x1="39" y1="26" x2="81" y2="26" stroke="#18181B" strokeWidth="3" />
+              <circle cx="60" cy="22" r="3" fill="#18181B" />
             </g>
           ) : mood === 'celebrating' ? (
             <g>
-              {/* Party hat */}
-              <polygon points="60,6 48,28 72,28" fill="#F472B6" stroke="#4C1D95" strokeWidth="3" strokeLinejoin="round" />
-              <circle cx="60" cy="5" r="4.5" fill="#FDE047" stroke="#4C1D95" strokeWidth="2" />
-              <line x1="53" y1="20" x2="67" y2="20" stroke="#FEE2E2" strokeWidth="2.5" />
+              {/* Party hat yellow with black dots */}
+              <polygon points="60,6 48,28 72,28" fill="#FACC15" stroke="#18181B" strokeWidth="3" strokeLinejoin="round" />
+              <circle cx="60" cy="5" r="4.5" fill="#FEF08A" stroke="#18181B" strokeWidth="2" />
+              <line x1="53" y1="20" x2="67" y2="20" stroke="#18181B" strokeWidth="2.5" />
             </g>
           ) : (
-            /* Cute forehead hair tuft */
-            <path d="M 57 28 Q 60 22 63 28" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+            /* Forehead hair tuft */
+            <path d="M 57 28 Q 60 22 63 28" stroke="#18181B" strokeWidth="2.5" strokeLinecap="round" fill="none" />
           )}
 
           {/* Cheeks */}
-          <circle cx="40" cy="74" r="7" fill="#FBCFE8" opacity="0.8" />
-          <circle cx="80" cy="74" r="7" fill="#FBCFE8" opacity="0.8" />
+          <circle cx="39" cy="74" r="6" fill="#FBBF24" opacity="0.8" />
+          <circle cx="81" cy="74" r="6" fill="#FBBF24" opacity="0.8" />
 
           {/* Eyes */}
           {mood === 'celebrating' || mood === 'happy' ? (
             <g>
-              {/* Joy curved happy eyes */}
-              <path d="M 43 62 Q 50 54 57 62" stroke="#4C1D95" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-              <path d="M 63 62 Q 70 54 77 62" stroke="#4C1D95" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+              <path d="M 43 62 Q 50 54 57 62" stroke="#18181B" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+              <path d="M 63 62 Q 70 54 77 62" stroke="#18181B" strokeWidth="3.5" strokeLinecap="round" fill="none" />
             </g>
           ) : mood === 'thinking' ? (
             <g>
-              {/* Left eye open, right eye squinting */}
-              <circle cx="49" cy="60" r="4.5" fill="#4C1D95" />
+              <circle cx="49" cy="60" r="4.5" fill="#18181B" />
               <circle cx="51" cy="58" r="1.5" fill="#FFFFFF" />
-              <path d="M 65 62 Q 72 58 77 62" stroke="#4C1D95" strokeWidth="3" strokeLinecap="round" fill="none" />
-              {/* Question lightbulb vibe */}
-              <line x1="60" y1="22" x2="60" y2="15" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 65 62 Q 72 58 77 62" stroke="#18181B" strokeWidth="3" strokeLinecap="round" fill="none" />
+              <line x1="60" y1="22" x2="60" y2="15" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
             </g>
           ) : (
             <g>
-              {/* Round curious eyes */}
-              <circle cx="48" cy="61" r="5" fill="#4C1D95" />
+              <circle cx="48" cy="61" r="5" fill="#18181B" />
               <circle cx="50" cy="59" r="1.8" fill="#FFFFFF" />
-              <circle cx="72" cy="61" r="5" fill="#4C1D95" />
+              <circle cx="72" cy="61" r="5" fill="#18181B" />
               <circle cx="74" cy="59" r="1.8" fill="#FFFFFF" />
             </g>
           )}
 
           {/* Nose & Mouth */}
-          <polygon points="60,68 57,65 63,65" fill="#EC4899" />
-          <path d="M 57 69 Q 60 74 63 69" stroke="#4C1D95" strokeWidth="2" strokeLinecap="round" fill="none" />
+          <polygon points="60,68 57,65 63,65" fill="#18181B" />
+          <path d="M 57 69 Q 60 74 63 69" stroke="#18181B" strokeWidth="2" strokeLinecap="round" fill="none" />
 
           {/* Whiskers */}
-          <line x1="28" y1="67" x2="16" y2="65" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" />
-          <line x1="29" y1="73" x2="18" y2="75" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" />
-          <line x1="92" y1="67" x2="104" y2="65" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" />
-          <line x1="91" y1="73" x2="102" y2="75" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" />
+          <line x1="28" y1="67" x2="16" y2="65" stroke="#18181B" strokeWidth="2" strokeLinecap="round" />
+          <line x1="29" y1="73" x2="18" y2="75" stroke="#18181B" strokeWidth="2" strokeLinecap="round" />
+          <line x1="92" y1="67" x2="104" y2="65" stroke="#18181B" strokeWidth="2" strokeLinecap="round" />
+          <line x1="91" y1="73" x2="102" y2="75" stroke="#18181B" strokeWidth="2" strokeLinecap="round" />
 
-          {/* Paw holding pencil/ruler */}
+          {/* Paw */}
           <g>
-            <ellipse cx="78" cy="98" rx="8" ry="6" fill="#EDE9FE" stroke="#4C1D95" strokeWidth="2" />
+            <ellipse cx="78" cy="98" rx="8" ry="6" fill="#FEF08A" stroke="#18181B" strokeWidth="2" />
             {mood === 'explaining' && (
-              <line x1="78" y1="95" x2="98" y2="82" stroke="#99F6E4" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="78" y1="95" x2="98" y2="82" stroke="#EAB308" strokeWidth="4.5" strokeLinecap="round" />
             )}
             {mood === 'detective' && (
               <g>
-                {/* Magnifying glass */}
-                <circle cx="94" cy="88" r="9" fill="#99F6E4" fillOpacity="0.4" stroke="#4C1D95" strokeWidth="2.5" />
-                <line x1="88" y1="94" x2="78" y2="102" stroke="#4C1D95" strokeWidth="3.5" strokeLinecap="round" />
+                <circle cx="94" cy="88" r="9" fill="#FEF08A" fillOpacity="0.5" stroke="#18181B" strokeWidth="2.5" />
+                <line x1="88" y1="94" x2="78" y2="102" stroke="#18181B" strokeWidth="3.5" strokeLinecap="round" />
               </g>
             )}
           </g>
@@ -159,10 +168,10 @@ export const StatCat: React.FC<StatCatProps> = ({
 
       {/* Thought / Speech Bubble */}
       {speech && (
-        <div className="relative bg-white border-2 border-[#C4B5FD] text-[#4C1D95] rounded-2xl rounded-bl-none p-3 shadow-sm max-w-md animate-fadeIn">
-          <p className={`${textSize} font-medium leading-relaxed`}>{speech}</p>
+        <div className="relative bg-white border-2 border-[#18181B] text-[#18181B] rounded-2xl rounded-bl-none p-3.5 shadow-md max-w-md animate-fadeIn">
+          <p className={`${textSize} font-black leading-relaxed text-[#18181B]`}>{speech}</p>
           {showIdHint && speechId && (
-            <p className="text-xs text-[#7C3AED] mt-1 pt-1 border-t border-[#DDD6FE] italic">
+            <p className="text-xs text-[#B45309] mt-1 pt-1 border-t border-[#FEF08A] italic font-bold">
               🇮🇩 {speechId}
             </p>
           )}

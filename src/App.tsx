@@ -9,7 +9,7 @@ import { Section4StepBuilder } from './components/sections/Section4StepBuilder';
 import { Section5Interpreting } from './components/sections/Section5Interpreting';
 import { Section6Practice } from './components/sections/Section6Practice';
 import { Section7Summary } from './components/sections/Section7Summary';
-import { ArrowRight, ChevronUp, Github, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronUp } from 'lucide-react';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<number>(1);
@@ -20,7 +20,6 @@ export default function App() {
   const [isTeacherModeOpen, setIsTeacherModeOpen] = useState<boolean>(false);
   const [isPresentationMode, setIsPresentationMode] = useState<boolean>(false);
 
-  // Scores
   const [levelScores, setLevelScores] = useState({
     l1: 0,
     l2H: false,
@@ -28,7 +27,6 @@ export default function App() {
     l3: 0,
   });
 
-  // Load from localStorage on mount
   useEffect(() => {
     try {
       const savedGoals = localStorage.getItem('stat_mastered_goals');
@@ -86,14 +84,13 @@ export default function App() {
     }
   };
 
-  // Compute stars: 1 if l1 >= 4, 1 if l2 drawing done, 1 if l3 detective done
   const totalStars =
     (levelScores.l1 >= 4 ? 1 : 0) +
     (levelScores.l2H && levelScores.l2P ? 1 : 0) +
     (levelScores.l3 >= 1 ? 1 : 0);
 
   return (
-    <div className={`min-h-screen bg-[#FAF7FF] text-[#4C1D95] flex flex-col font-sans ${isPresentationMode ? 'text-lg' : ''}`}>
+    <div className={`min-h-screen bg-[#FFFDF7] text-[#18181B] flex flex-col font-sans ${isPresentationMode ? 'text-lg' : ''}`}>
       {/* Sticky Navigation */}
       <Navbar
         activeSection={activeSection}
@@ -120,7 +117,7 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(2)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Real Life Data (Section 2) <ArrowRight className="w-4 h-4" />
             </button>
@@ -128,7 +125,7 @@ export default function App() {
         </div>
 
         {/* Section 2: Real Life */}
-        <div className="space-y-4 pt-6 border-t border-[#EDE9FE]">
+        <div className="space-y-4 pt-6 border-t-2 border-[#EAB308]/25">
           <Section2RealLife
             onGoToSection={handleGoToSection}
             showIdHint={showIdHint}
@@ -136,15 +133,15 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(3)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Core Concepts (Section 3) <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Section 3: Histogram vs Polygon Concept */}
-        <div className="space-y-4 pt-6 border-t border-[#EDE9FE]">
+        {/* Section 3: Histogram vs Bar Chart Concept */}
+        <div className="space-y-4 pt-6 border-t-2 border-[#EAB308]/25">
           <Section3Concept
             onGoToSection={handleGoToSection}
             showIdHint={showIdHint}
@@ -152,7 +149,7 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(4)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Step-by-Step Drawing (Section 4) <ArrowRight className="w-4 h-4" />
             </button>
@@ -160,7 +157,7 @@ export default function App() {
         </div>
 
         {/* Section 4: Step-by-step Interactive Builder */}
-        <div className="space-y-4 pt-6 border-t border-[#EDE9FE]">
+        <div className="space-y-4 pt-6 border-t-2 border-[#EAB308]/25">
           <Section4StepBuilder
             onGoToSection={handleGoToSection}
             showIdHint={showIdHint}
@@ -168,7 +165,7 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(5)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Interpreting Graphs (Section 5) <ArrowRight className="w-4 h-4" />
             </button>
@@ -176,7 +173,7 @@ export default function App() {
         </div>
 
         {/* Section 5: Interpreting Graphs */}
-        <div className="space-y-4 pt-6 border-t border-[#EDE9FE]">
+        <div className="space-y-4 pt-6 border-t-2 border-[#EAB308]/25">
           <Section5Interpreting
             onGoToSection={handleGoToSection}
             showIdHint={showIdHint}
@@ -184,7 +181,7 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(6)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Practice Zone (Section 6) <ArrowRight className="w-4 h-4" />
             </button>
@@ -192,7 +189,7 @@ export default function App() {
         </div>
 
         {/* Section 6: Exercise Practice Zone */}
-        <div className="space-y-4 pt-6 border-t border-[#EDE9FE]">
+        <div className="space-y-4 pt-6 border-t-2 border-[#EAB308]/25">
           <Section6Practice
             onGoToSection={handleGoToSection}
             showIdHint={showIdHint}
@@ -201,7 +198,7 @@ export default function App() {
           <div className="flex justify-end pt-2">
             <button
               onClick={() => handleGoToSection(7)}
-              className="px-6 py-2.5 bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#7C3AED] font-bold rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-[#FACC15] hover:bg-[#FDE047] text-[#18181B] font-black rounded-2xl text-xs md:text-sm flex items-center gap-1.5 transition-all shadow-[0_3px_0_#CA8A04] active:translate-y-0.5 active:shadow-none border-2 border-[#18181B]"
             >
               Continue to Cheat Sheet &amp; Exit Ticket (Section 7) <ArrowRight className="w-4 h-4" />
             </button>
@@ -209,7 +206,7 @@ export default function App() {
         </div>
 
         {/* Section 7: Summary & Exit Ticket */}
-        <div className="pt-6 border-t border-[#EDE9FE]">
+        <div className="pt-6 border-t-2 border-[#EAB308]/25">
           <Section7Summary
             masteredGoals={masteredGoals}
             onToggleGoal={handleToggleGoal}
@@ -222,33 +219,32 @@ export default function App() {
       <div className="fixed bottom-6 right-6 z-30 no-print">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md shadow-lg border border-[#DDD6FE] text-[#7C3AED] hover:bg-white flex items-center justify-center transition-transform hover:-translate-y-1 active:translate-y-0"
+          className="w-11 h-11 rounded-2xl bg-[#FACC15] shadow-lg border-2 border-[#18181B] text-[#18181B] hover:bg-[#FEF08A] flex items-center justify-center transition-transform hover:-translate-y-1 active:translate-y-0 shadow-[0_3px_0_#CA8A04]"
           title="Scroll to Top"
         >
-          <ChevronUp className="w-5 h-5" />
+          <ChevronUp className="w-5 h-5 stroke-[3]" />
         </button>
       </div>
 
       {/* Footer */}
-      <footer className="mt-20 border-t border-[#EDE9FE] bg-white py-10 px-4 text-xs text-gray-500 no-print">
+      <footer className="mt-20 border-t-2 border-[#EAB308]/30 bg-white py-10 px-4 text-xs text-gray-700 no-print">
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h4 className="font-extrabold text-[#4C1D95] text-sm">
+              <h4 className="font-extrabold text-[#18181B] text-sm">
                 Cambridge Lower Secondary Mathematics (Stage 8)
               </h4>
-              <p className="text-gray-500 mt-0.5">
+              <p className="text-gray-600 mt-0.5 font-semibold">
                 Unit 16: Statistics / Handling Data • Topic 16.1 Interpreting and drawing frequency diagrams
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#7C3AED]">
-              <span>Static React 19 + TypeScript + Tailwind CSS</span>
+            <div className="flex items-center gap-2 text-xs font-black text-[#854D0E] bg-[#FEF08A] px-3 py-1 rounded-full border border-[#EAB308]">
+              <span>Kuning Ceria &amp; Hitam Tegas (Playful Yellow Theme ✨)</span>
             </div>
           </div>
 
-          {/* Deployment instructions card */}
-          <div className="p-4 bg-[#FAF5FF] rounded-2xl border border-[#DDD6FE] text-[11px] text-[#5B21B6] space-y-1">
-            <span className="font-bold text-[#4C1D95] block">
+          <div className="p-4 bg-[#FFFDF5] rounded-2xl border-2 border-[#EAB308] text-[11px] text-[#18181B] space-y-1 font-semibold">
+            <span className="font-black text-[#854D0E] block">
               💻 Local Run &amp; Vercel Deployment Guide:
             </span>
             <p>

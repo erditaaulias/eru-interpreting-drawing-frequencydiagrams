@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { SCREEN_TIME_DATA, HEIGHTS_DATA, BOBA_WAITING_DATA, calculateTotal, calculateMidpoint } from '../../data/lessonData';
+import { SCREEN_TIME_DATA, SIBLINGS_DATA, BOBA_WAITING_DATA, calculateTotal } from '../../data/lessonData';
 import { Histogram } from '../charts/Histogram';
-import { FrequencyPolygon } from '../charts/FrequencyPolygon';
-import { OverlaidChart } from '../charts/OverlaidChart';
-import { StatCat } from '../mascot/StatCat';
-import { Smartphone, Ruler, Coffee, Table as TableIcon, BarChart3, TrendingUp, Sparkles, Stethoscope, CloudSun, ShoppingBag, Music } from 'lucide-react';
+import { BarChart } from '../charts/BarChart';
+import { Smartphone, Users, Coffee, Table as TableIcon, BarChart3, Sparkles, Stethoscope, CloudSun, ShoppingBag, Music } from 'lucide-react';
 
 interface Section2RealLifeProps {
   onGoToSection: (sectionId: number) => void;
@@ -16,85 +14,78 @@ export const Section2RealLife: React.FC<Section2RealLifeProps> = ({
   showIdHint,
 }) => {
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
-  const [viewMode, setViewMode] = useState<'chart' | 'table' | 'overlay'>('chart');
+  const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart');
 
   const stories = [
     {
       dataset: SCREEN_TIME_DATA,
-      icon: <Smartphone className="w-5 h-5 text-[#8B5CF6]" />,
-      defaultChart: 'histogram' as const,
-      color: 'from-[#EDE9FE] to-[#DDD6FE]',
+      icon: <Smartphone className="w-5 h-5 text-[#18181B]" />,
+      chartType: 'histogram' as const,
+      color: 'bg-[#FACC15]',
+      badge: 'Continuous Data • Histogram (Touching Bars)',
     },
     {
-      dataset: HEIGHTS_DATA,
-      icon: <Ruler className="w-5 h-5 text-[#EC4899]" />,
-      defaultChart: 'polygon' as const,
-      color: 'from-[#FCE7F3] to-[#FBCFE8]',
+      dataset: SIBLINGS_DATA,
+      icon: <Users className="w-5 h-5 text-[#18181B]" />,
+      chartType: 'barchart' as const,
+      color: 'bg-[#FEF08A]',
+      badge: 'Discrete Data • Bar Chart (Gaps Between Bars)',
     },
     {
       dataset: BOBA_WAITING_DATA,
-      icon: <Coffee className="w-5 h-5 text-[#14B8A6]" />,
-      defaultChart: 'overlaid' as const,
-      color: 'from-[#CCFBF1] to-[#99F6E4]',
+      icon: <Coffee className="w-5 h-5 text-[#18181B]" />,
+      chartType: 'histogram' as const,
+      color: 'bg-[#FDE047]',
+      badge: 'Continuous Data • Histogram (Touching Bars)',
     },
   ];
 
   const current = stories[activeStoryIdx];
   const dataset = current.dataset;
-  const totalStudents = calculateTotal(dataset.classes);
+  const totalStudents = calculateTotal(dataset.classes, dataset.discreteData);
 
   return (
     <section id="section-2" className="scroll-mt-24 space-y-8">
       {/* Section Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <span className="text-xs font-black tracking-widest uppercase text-[#7C3AED] bg-[#EDE9FE] px-3 py-1 rounded-full">
+          <span className="text-xs font-black tracking-widest uppercase text-[#18181B] bg-[#FEF08A] px-3 py-1 rounded-full border-2 border-[#18181B] shadow-xs">
             Section 2 • Real-Life Data
           </span>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-[#4C1D95] mt-1">
-            Frequency Diagrams in Real Life
+          <h2 className="text-2xl md:text-4xl font-extrabold text-[#18181B] mt-1.5">
+            Histograms &amp; Bar Charts in Real Life 📱
           </h2>
-          <p className="text-sm text-[#6D28D9] mt-1">
-            Data is everywhere in our lives—from how long we scroll our phones, to our class height records, to bubble tea queues!
+          <p className="text-sm text-[#18181B] font-semibold mt-1">
+            Learn to spot the difference: when to use a <strong>Histogram</strong> (continuous data) vs a <strong>Bar Chart</strong> (discrete data).
           </p>
           {showIdHint && (
-            <p className="text-xs text-[#0D9488] italic mt-0.5">
-              🇮🇩 Contoh nyata: Waktu layar HP, tinggi badan siswi Kelas 8, dan waktu antre boba.
+            <p className="text-xs text-[#B45309] italic mt-0.5 font-bold">
+              🇮🇩 Contoh nyata: Waktu layar HP (kontinu - histogram), jumlah saudara kandung (diskrit - diagram batang), dan waktu antre boba (kontinu - histogram).
             </p>
           )}
         </div>
 
         {/* View Mode Switcher */}
-        <div className="bg-white p-1 rounded-2xl border border-[#DDD6FE] shadow-xs flex items-center gap-1 self-stretch md:self-auto">
+        <div className="bg-[#FEFCE8] p-1 rounded-2xl border-2 border-[#18181B] shadow-xs flex items-center gap-1 self-stretch md:self-auto">
           <button
             onClick={() => setViewMode('chart')}
-            className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
+            className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
               viewMode === 'chart'
-                ? 'bg-[#7C3AED] text-white shadow-xs'
-                : 'text-[#6D28D9] hover:bg-[#FAF5FF]'
+                ? 'bg-[#FACC15] text-[#18181B] shadow-xs border-2 border-[#18181B]'
+                : 'text-[#18181B] hover:bg-[#FEF08A]'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" /> Chart View
           </button>
           <button
             onClick={() => setViewMode('table')}
-            className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
+            className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
               viewMode === 'table'
-                ? 'bg-[#7C3AED] text-white shadow-xs'
-                : 'text-[#6D28D9] hover:bg-[#FAF5FF]'
+                ? 'bg-[#FACC15] text-[#18181B] shadow-xs border-2 border-[#18181B]'
+                : 'text-[#18181B] hover:bg-[#FEF08A]'
             }`}
           >
             <TableIcon className="w-3.5 h-3.5" /> Table View
-          </button>
-          <button
-            onClick={() => setViewMode('overlay')}
-            className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
-              viewMode === 'overlay'
-                ? 'bg-[#7C3AED] text-white shadow-xs'
-                : 'text-[#6D28D9] hover:bg-[#FAF5FF]'
-            }`}
-          >
-            <TrendingUp className="w-3.5 h-3.5" /> Compare Overlay
           </button>
         </div>
       </div>
@@ -107,23 +98,23 @@ export const Section2RealLife: React.FC<Section2RealLifeProps> = ({
             <button
               key={story.dataset.id}
               onClick={() => setActiveStoryIdx(idx)}
-              className={`p-4 rounded-3xl text-left border transition-all flex items-start gap-3.5 ${
+              className={`p-4 rounded-3xl text-left border-2 transition-all flex items-start gap-3.5 ${
                 isActive
-                  ? 'bg-white border-[#7C3AED] shadow-md ring-2 ring-[#C4B5FD]'
-                  : 'bg-white/70 border-[#E9D5FF] hover:bg-white hover:border-[#C4B5FD]'
+                  ? 'bg-[#FEFCE8] border-[#18181B] shadow-md ring-2 ring-[#FACC15]'
+                  : 'bg-white border-[#EAB308]/30 hover:border-[#18181B] hover:bg-[#FEFCE8]/40'
               }`}
             >
-              <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${story.color} shrink-0`}>
+              <div className={`p-2.5 rounded-2xl ${story.color} shrink-0 border-2 border-[#18181B] shadow-xs`}>
                 {story.icon}
               </div>
               <div className="min-w-0">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#7C3AED] block">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#B45309] block">
                   Story {idx + 1}
                 </span>
-                <h4 className="font-bold text-xs md:text-sm text-[#4C1D95] truncate">
+                <h4 className="font-extrabold text-xs md:text-sm text-[#18181B] truncate">
                   {story.dataset.title}
                 </h4>
-                <p className="text-[11px] text-gray-500 truncate mt-0.5">
+                <p className="text-[11px] text-gray-600 font-semibold truncate mt-0.5">
                   {story.dataset.subtitle}
                 </p>
               </div>
@@ -133,175 +124,167 @@ export const Section2RealLife: React.FC<Section2RealLifeProps> = ({
       </div>
 
       {/* Main Story Interactive Card */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#E9D5FF] shadow-sm space-y-6">
-        {/* Story Intro */}
-        <div className="bg-[#FAF5FF] p-4 rounded-2xl border border-[#EDE9FE] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-[#EAB308]/40 hover:border-[#EAB308] shadow-sm space-y-6">
+        <div className="bg-[#FEFCE8] p-4.5 rounded-2xl border-2 border-[#FEF08A] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
-            <h3 className="font-extrabold text-[#4C1D95] text-lg md:text-xl flex items-center gap-2">
-              <span>{dataset.title}</span>
-              <span className="text-xs bg-[#EDE9FE] text-[#6D28D9] px-2.5 py-0.5 rounded-full font-bold">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-extrabold text-[#18181B] text-lg md:text-xl">
+                {dataset.title}
+              </h3>
+              <span className="text-xs bg-[#FEF08A] text-[#18181B] border-2 border-[#18181B] px-3 py-0.5 rounded-full font-black shadow-xs">
                 Total = {totalStudents} students
               </span>
-            </h3>
-            <p className="text-xs md:text-sm text-[#5B21B6] leading-relaxed">
+            </div>
+            <p className="text-xs md:text-sm text-[#18181B] font-semibold leading-relaxed">
               {dataset.story}
             </p>
           </div>
-          <div className="shrink-0 bg-white px-3 py-2 rounded-xl border border-[#DDD6FE] text-xs text-[#7C3AED] font-semibold">
+          <div className="shrink-0 bg-white px-3.5 py-2 rounded-xl border-2 border-[#18181B]/15 text-xs text-[#B45309] font-black shadow-xs">
             ✨ {dataset.realWorldContext}
           </div>
         </div>
 
-        {/* Display Content based on viewMode */}
+        {/* Display Content */}
         <div>
           {viewMode === 'table' ? (
-            /* Frequency Table View */
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#EDE9FE] text-[#4C1D95] text-xs md:text-sm">
-                    <th className="p-3 rounded-l-2xl font-extrabold">
-                      Class Interval ({dataset.unit})
+                  <tr className="bg-[#FEF08A] text-[#18181B] text-xs md:text-sm border-2 border-[#18181B]">
+                    <th className="p-3 rounded-l-2xl font-black">
+                      {dataset.dataType === 'continuous'
+                        ? `Class Interval (${dataset.unit})`
+                        : `Category (${dataset.variableName})`}
                     </th>
-                    <th className="p-3 font-extrabold">Midpoint</th>
-                    <th className="p-3 font-extrabold text-center">Tally / Calculation</th>
-                    <th className="p-3 rounded-r-2xl font-extrabold text-right">
+                    <th className="p-3 font-black text-center">Tally / Calculation</th>
+                    <th className="p-3 rounded-r-2xl font-black text-right">
                       Frequency (Number of Students)
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#F3E8FF] text-xs md:text-sm font-semibold text-[#4C1D95]">
-                  {dataset.classes.map((cls, idx) => {
-                    const mid = calculateMidpoint(cls);
-                    return (
-                      <tr key={`row-${idx}`} className="hover:bg-[#FAF5FF] transition-colors">
-                        <td className="p-3 font-bold text-[#7C3AED]">
-                          {cls.lower} ≤ {dataset.symbol} &lt; {cls.upper}
-                        </td>
-                        <td className="p-3 text-[#0D9488]">
-                          ({cls.lower} + {cls.upper}) ÷ 2 = <strong>{mid}</strong>
-                        </td>
-                        <td className="p-3 text-center">
-                          <span className="font-mono text-xs tracking-widest text-gray-500">
-                            {'|'.repeat(cls.frequency)}
-                          </span>
-                        </td>
-                        <td className="p-3 text-right">
-                          <span className="inline-block bg-[#EDE9FE] text-[#4C1D95] px-3 py-1 rounded-full font-black">
-                            {cls.frequency}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                <tbody className="divide-y divide-gray-200 text-xs md:text-sm font-bold text-[#18181B]">
+                  {dataset.classes?.map((cls, idx) => (
+                    <tr key={`row-${idx}`} className="hover:bg-[#FEFCE8] transition-colors">
+                      <td className="p-3 font-black text-[#18181B]">
+                        {cls.lower} ≤ {dataset.symbol} &lt; {cls.upper}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="font-mono text-xs tracking-widest text-[#B45309] font-black">
+                          {'|'.repeat(cls.frequency)}
+                        </span>
+                      </td>
+                      <td className="p-3 text-right">
+                        <span className="inline-block bg-[#FEF08A] text-[#18181B] border-2 border-[#18181B] px-3 py-0.5 rounded-full font-black shadow-xs">
+                          {cls.frequency}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {dataset.discreteData?.map((item, idx) => (
+                    <tr key={`drow-${idx}`} className="hover:bg-[#FEFCE8] transition-colors">
+                      <td className="p-3 font-black text-[#18181B]">
+                        {item.category}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="font-mono text-xs tracking-widest text-[#B45309] font-black">
+                          {'|'.repeat(item.frequency)}
+                        </span>
+                      </td>
+                      <td className="p-3 text-right">
+                        <span className="inline-block bg-[#FEF08A] text-[#18181B] border-2 border-[#18181B] px-3 py-0.5 rounded-full font-black shadow-xs">
+                          {item.frequency}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-[#FAF5FF] font-black text-[#4C1D95] text-xs md:text-sm">
-                    <td className="p-3" colSpan={3}>
+                  <tr className="bg-[#FEFCE8] font-black text-[#18181B] text-xs md:text-sm border-t-2 border-[#18181B]">
+                    <td className="p-3" colSpan={2}>
                       Total Frequency (Σf):
                     </td>
-                    <td className="p-3 text-right text-[#7C3AED] text-base">
+                    <td className="p-3 text-right text-[#18181B] text-base font-black">
                       {totalStudents} students
                     </td>
                   </tr>
                 </tfoot>
               </table>
             </div>
-          ) : viewMode === 'chart' ? (
-            /* Selected Diagram */
+          ) : (
             <div>
-              {current.defaultChart === 'histogram' && (
+              {current.chartType === 'histogram' && dataset.classes && (
                 <Histogram
                   classes={dataset.classes}
                   variableName={dataset.variableName}
-                  unit={dataset.unit}
+                  unit={dataset.unit || ''}
                   symbol={dataset.symbol}
                   title={`Histogram: ${dataset.title}`}
                 />
               )}
-              {current.defaultChart === 'polygon' && (
-                <FrequencyPolygon
-                  classes={dataset.classes}
+              {current.chartType === 'barchart' && dataset.discreteData && (
+                <BarChart
+                  data={dataset.discreteData}
                   variableName={dataset.variableName}
                   unit={dataset.unit}
-                  symbol={dataset.symbol}
-                  title={`Frequency Polygon: ${dataset.title}`}
-                />
-              )}
-              {current.defaultChart === 'overlaid' && (
-                <OverlaidChart
-                  classes={dataset.classes}
-                  variableName={dataset.variableName}
-                  unit={dataset.unit}
-                  symbol={dataset.symbol}
-                  title={`Overlaid: ${dataset.title}`}
+                  title={`Bar Chart: ${dataset.title}`}
                 />
               )}
             </div>
-          ) : (
-            /* Overlaid Comparison View */
-            <OverlaidChart
-              classes={dataset.classes}
-              variableName={dataset.variableName}
-              unit={dataset.unit}
-              symbol={dataset.symbol}
-              title={`Combined View: ${dataset.title}`}
-            />
           )}
         </div>
       </div>
 
-      {/* Real-Life Context Banner: Who uses frequency diagrams? */}
-      <div className="bg-gradient-to-r from-[#FAF5FF] via-white to-[#F0FDFA] rounded-3xl p-6 border border-[#DDD6FE] shadow-sm">
-        <h3 className="font-extrabold text-[#4C1D95] text-base md:text-lg mb-3 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#F59E0B]" />
+      {/* Real-Life Context Banner */}
+      <div className="bg-gradient-to-r from-[#FEFCE8] via-white to-[#FEF08A]/40 rounded-3xl p-6 border-2 border-[#EAB308]/40 shadow-sm">
+        <h3 className="font-extrabold text-[#18181B] text-base md:text-lg mb-3 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-[#EAB308]" />
           Who uses frequency diagrams in the real world?
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EDE9FE] shadow-xs flex items-start gap-3">
-            <span className="p-2 rounded-xl bg-[#FCE7F3] text-[#EC4899] shrink-0">
+          <div className="bg-white p-3.5 rounded-2xl border-2 border-[#18181B]/15 shadow-xs flex items-start gap-3">
+            <span className="p-2 rounded-xl bg-[#FACC15] text-[#18181B] border border-[#18181B] shrink-0">
               <Stethoscope className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="font-bold text-xs text-[#4C1D95]">Doctors &amp; Clinics</h4>
-              <p className="text-[11px] text-gray-600 mt-0.5">
-                Track growth percentiles (height and baby weight) over time using polygons.
+              <h4 className="font-black text-xs text-[#18181B]">Doctors &amp; Clinics</h4>
+              <p className="text-[11px] text-gray-600 mt-0.5 font-medium">
+                Track patient recovery hours and health vitals using continuous histograms.
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EDE9FE] shadow-xs flex items-start gap-3">
-            <span className="p-2 rounded-xl bg-[#CCFBF1] text-[#0D9488] shrink-0">
+          <div className="bg-white p-3.5 rounded-2xl border-2 border-[#18181B]/15 shadow-xs flex items-start gap-3">
+            <span className="p-2 rounded-xl bg-[#FEF08A] text-[#18181B] border border-[#18181B] shrink-0">
               <CloudSun className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="font-bold text-xs text-[#4C1D95]">Meteorologists</h4>
-              <p className="text-[11px] text-gray-600 mt-0.5">
-                Record daily rainfall in Jakarta (mm) to forecast monsoon flash flooding.
+              <h4 className="font-black text-xs text-[#18181B]">Meteorologists</h4>
+              <p className="text-[11px] text-gray-600 mt-0.5 font-medium">
+                Record daily rainfall in Jakarta (mm) using histograms to forecast flooding.
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EDE9FE] shadow-xs flex items-start gap-3">
-            <span className="p-2 rounded-xl bg-[#EDE9FE] text-[#7C3AED] shrink-0">
+          <div className="bg-white p-3.5 rounded-2xl border-2 border-[#18181B]/15 shadow-xs flex items-start gap-3">
+            <span className="p-2 rounded-xl bg-[#18181B] text-[#FACC15] shrink-0">
               <ShoppingBag className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="font-bold text-xs text-[#4C1D95]">Cafés &amp; Malls</h4>
-              <p className="text-[11px] text-gray-600 mt-0.5">
-                Graph customer wait times to decide when to open extra cashier counters.
+              <h4 className="font-black text-xs text-[#18181B]">Cafés &amp; Malls</h4>
+              <p className="text-[11px] text-gray-600 mt-0.5 font-medium">
+                Graph drink sales per flavour using bar charts with spaces between categories.
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-[#EDE9FE] shadow-xs flex items-start gap-3">
-            <span className="p-2 rounded-xl bg-[#FEF3C7] text-[#D97706] shrink-0">
+          <div className="bg-white p-3.5 rounded-2xl border-2 border-[#18181B]/15 shadow-xs flex items-start gap-3">
+            <span className="p-2 rounded-xl bg-[#FDE047] text-[#18181B] border border-[#18181B] shrink-0">
               <Music className="w-4 h-4" />
             </span>
             <div>
-              <h4 className="font-bold text-xs text-[#4C1D95]">Streaming Apps</h4>
-              <p className="text-[11px] text-gray-600 mt-0.5">
-                Spotify &amp; YouTube analyse audio streaming durations to recommend music!
+              <h4 className="font-black text-xs text-[#18181B]">Streaming Apps</h4>
+              <p className="text-[11px] text-gray-600 mt-0.5 font-medium">
+                Spotify &amp; YouTube analyse track listening durations with continuous histograms.
               </p>
             </div>
           </div>
